@@ -1,0 +1,12 @@
+.basic-display {
+  .row {
+    .label {
+      &:nth-child(1) {
+        width: 8.8rem;
+      }
+      &:nth-child(3) {
+        width: 7.4rem;
+      }
+    }
+  }
+}

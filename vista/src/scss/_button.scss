@@ -1,0 +1,48 @@
+@import './variables/colors.scss';
+
+button.mat-raised-button,
+button.mat-stroked-button {
+  min-width: 88px;
+  border-radius: 2px;
+}
+
+.mat-raised-button {
+  line-height: 32px !important;
+  &.btn-delete {
+    border: #ccc 1px solid;
+    line-height: 30px !important;
+    color: $status-error-color;
+    margin-right: 10px;
+  }
+  &.btn-add {
+    line-height: 32px !important;
+  }
+  &.btn-cancel {
+    border: #ccc 1px solid;
+    line-height: 30px !important;
+    color: $status-none-color;
+    margin-right: 10px;
+  }
+}
+
+.icon-btn {
+  background-color: $white;
+  height: 35px !important;
+  width: 35px !important;
+  border: solid 1px $light-grey !important;
+  border-radius: 3px !important;
+  padding: 6px !important;
+  line-height: normal !important;
+  bottom: 4px;
+
+  span {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .refresh-icon-gray {
+    background-image: url("../assets/images/refresh-gray.svg");
+    background-size: 100%;
+  }
+}

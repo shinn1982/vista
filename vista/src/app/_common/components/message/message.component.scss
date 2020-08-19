@@ -1,0 +1,44 @@
+// @import '~@angular/material/theming';
+@import '../../../../scss/theme.scss';
+
+.message {
+  padding: 0 10px;
+
+  &.success {
+    background: mat-color($primary, 50);
+
+    .mat-icon {
+      color: mat-color($primary);
+    }
+  }
+
+  &.warn {
+    background: mat-color($warn, 50);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    margin-right: 30px;
+
+    .mat-icon {
+      margin-right: 8px;
+    }
+
+    .content {
+      white-space: pre-line;
+      // color: mat-color($primary, '200-contrast');
+    }
+  }
+
+  .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

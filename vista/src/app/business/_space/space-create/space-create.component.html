@@ -1,0 +1,115 @@
+<div class="subpage-container">
+
+  <div class="bread-crumb">
+    <ul>
+      <li *ngFor="let perCrumb of breadCrumbData" [ngClass]="{'disabled':perCrumb.disabled }"
+        (click)="backToMainPage(perCrumb)">
+        {{perCrumb.label}}</li>
+    </ul>
+  </div>
+  <div class="subpage-content narrow">
+    <div class="block-panel">
+      <div class="panel-header">
+        {{'SPACE_CREATE_HEADER' | translate}}
+      </div>
+      <div class="panel-body">
+        <form [formGroup]="form">
+          <div class="content">
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'SPACE_TABLE_HEADER_NAME' | translate}}" formControlName="spaceNameCtrl"
+                required>
+              <mat-error *ngIf="form.hasError('required', 'spaceNameCtrl')">
+                {{'SPACE_CREATE_NAME_REQUIRED' | translate}}
+              </mat-error>
+              <mat-error *ngIf="form.hasError('pattern', 'spaceNameCtrl')">
+                {{'SPACE_CREATE_NAME_PATTERN' | translate}}
+              </mat-error>
+              <mat-error *ngIf="form.hasError('nameRepeat', 'spaceNameCtrl')">
+                {{'SPACE_CREATE_NAME_REPEAT' | translate}}
+              </mat-error>
+              <mat-spinner [strokeWidth]="1" [diameter]="20" style="float: right;margin-top: -20px;"
+                *ngIf="flgs.spaceNameLoading">
+              </mat-spinner>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="SNMP Community" formControlName="snmpCtrl">
+              <mat-error *ngIf="form.hasError('maxlength', 'snmpCtrl')">
+                {{'SPACE_CREATE_COMMUNITY_PATTERN' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'SPACE_DETAIL_DES' | translate}}" formControlName="descriptionCtrl">
+              <mat-error *ngIf="form.hasError('maxlength', 'descriptionCtrl')">
+                {{'SPACE_CREATE_DES_MAXLENGTH' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'SPACE_DETAIL_FILTER' | translate}}" formControlName="filterCtrl">
+              <mat-error *ngIf="form.hasError('maxlength', 'filterCtrl')">
+                {{'SAPCE_CREATE_FILTER_MAXLENGTH' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <div class="range-slider">
+              <span class="label">{{'SPACE_CREATE_BANDWIDTH_THRESHOLD'| translate}}</span>
+              <ion-range-slider class="ion-range-slider" type="single" [min]="0" [max]="100"
+                [from]="form.get('bandwidthThresholdCtrl').value" step="1" prefix="" postfix=" %" decorate_both="false"
+                (onFinish)="onUsageSliderFinish($event)">
+              </ion-range-slider>
+            </div>
+
+            <div>
+              <div>
+                <span class="label">{{'SPACE_CREATE_NODE_NAME_REG_LIST_LABEL' | translate}}</span>
+                <mat-icon color="primary" class="help-icon noselect"
+                  matTooltip="{{'SPACE_CREATE_NODE_NAME_REG_TOOLTIP_CONTENT' | translate}}" matTooltipPosition="right"
+                  matTooltipHideDelay="300" matTooltipClass="tooltip-sapce-name-reg">
+                  help
+                </mat-icon>
+              </div>
+              <div class="drag-list" cdkDropList (cdkDropListDropped)="drop($event)" formArrayName="nameRegexArray">
+                <div class="drag-item" *ngFor="let nameRegex of nameRegexArray.controls; let i = index" cdkDrag
+                  [cdkDragDisabled]="nameRegInput.focused">
+                  <div class="name-regex-label noselect">
+                    <span>Priority {{i+1}}</span>
+                  </div>
+
+                  <mat-form-field class="mat-form-field">
+                    <input matInput #nameRegInput="matInput"
+                      placeholder="{{'SPACE_CREATE_NODE_NAME_REG_INPUT_PLACEHOLDER' | translate}}"
+                      formControlName="{{i}}">
+                    <mat-error *ngIf="nameRegex.hasError('maxlength')">
+                      {{'SPACE_CREATE_NODE_NAME_REG_MAXLENGTH' | translate}}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <div class="icon-div noselect">
+                    <mat-icon color="primary" *ngIf="nameRegexArray.controls.length<10" (click)="addNameRegex()">
+                      add_box
+                    </mat-icon>
+                    <mat-icon color="primary" *ngIf="nameRegexArray.controls.length>1" (click)="deleteNameRegex(i)">
+                      delete
+                    </mat-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="btn-div">
+      <button mat-raised-button class="mat-elevation-z0" color="primary"
+        [disabled]="!form.valid || flgs.spaceNameLoading" (click)="save()">{{'COMMON_USED_LABEL_BTN_SAVE' | translate}}
+      </button>
+      <button mat-stroked-button (click)="backToMainPage()">{{'COMMON_USED_LABEL_BTN_CANCEL' | translate}}</button>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,94 @@
+<div class="bread-crumb">
+  <ul>
+    <li *ngFor="let perCrumb of breadCrumbData" [ngClass]="{'disabled':perCrumb.disabled }"
+      (click)="backToMainPage(perCrumb)">
+      {{perCrumb.label}}</li>
+  </ul>
+</div>
+
+<div class="toolbar">
+  <div *ngIf="role != 'operator'" class="left-btns add-user">
+    <mat-form-field>
+      <input type="text" matInput placeholder="{{'LOGIN_USERNAME_PLACEHOLDER' | translate}}"
+        [formControl]="userNameCtrl" [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option *ngFor="let user of userList" [value]="user.username" (click)="selectUser(user.username)">
+          {{user.username}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select disableOptionCentering placeholder="{{'USER_DETAIL_SPACE_ROLE' | translate}}"
+        panelClass="select-panel-space-user-role" [(value)]="spaceRole">
+        <mat-option value="admin">Space Admin</mat-option>
+        <mat-option value="operator">Space Operator</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button class="mat-elevation-z0" color="primary" [disabled]="!spaceRole || !selectedUser"
+      (click)="addUser()">{{'COMMON_USED_LABEL_ADD' | translate}}</button>
+  </div>
+  <div>
+    <mat-form-field class="search">
+      <input matInput #filter placeholder="{{'COMMON_USED_LABEL_SEARCH' | translate}}">
+      <i matSuffix class="material-icons">search</i>
+    </mat-form-field>
+    <button mat-icon-button class="icon-btn" (click)="getSpaceUsers()">
+      <span class="refresh-icon-gray"></span>
+    </button>
+  </div>
+</div>
+
+<div class="mat-elevation-z0">
+  <table mat-table class="main-table" [dataSource]="dataSource" matSort matSortActive="{{tableParams.orderBy}}"
+    matSortDirection="{{tableParams.order}}">
+
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef> {{'LOGIN_USERNAME_PLACEHOLDER' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.username}} </td>
+    </ng-container>
+    <ng-container matColumnDef="useralias">
+      <th mat-header-cell *matHeaderCellDef> {{'USER_TABLE_HEADER_ALIAS' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.alias?row.alias:''}} </td>
+    </ng-container>
+    <ng-container matColumnDef="created_on">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'USER_DETAIL_SPACE_ADDED_ON' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.created_on | formatTime}} </td>
+    </ng-container>
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'USER_DETAIL_SPACE_ROLE' | translate}} </th>
+      <td mat-cell *matCellDef="let row">
+        <span *ngIf="row.role==='owner' && role !== 'operator' "> owner </span>
+        <p *ngIf="role === 'operator'">{{row.role}}</p>
+        <mat-form-field *ngIf="role !== 'operator' && row.role!=='owner'">
+          <mat-select disableOptionCentering [(value)]='row.role' (selectionChange)="ableSave(row.index)"
+            panelClass="select-panel-space-user-role">
+            <mat-option value="admin">Space Admin</mat-option>
+            <mat-option value="operator">Space Operator</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="text-center"> {{'COMMON_USED_LABEL_ACTION' | translate}} </th>
+      <td mat-cell *matCellDef="let row" class="text-center">
+        <button [disabled]="row.role==='owner'|| row.disabled" mat-button color="primary"
+          (click)="save(row)">{{'COMMON_USED_LABEL_BTN_SAVE' | translate}}</button>
+        <button [disabled]="row.role==='owner'" mat-button color="warn"
+          (click)="delete(row)">{{'COMMON_USED_LABEL_DELETE' | translate}}</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [length]="tableParams.numOfAll" [pageIndex]="tableParams.pageIndex" [pageSize]="tableParams.pageSize"
+    [pageSizeOptions]="tableParams.pageSizeOptions" [hidden]="dataSource.data.length===0">
+  </mat-paginator>
+</div>
+
+<div class="btn-div">
+  <button class="return-btn" mat-stroked-button (click)="backToMainPage()">
+    {{'COMMON_USED_LABEL_BTN_BACK' | translate}}
+  </button>
+</div>

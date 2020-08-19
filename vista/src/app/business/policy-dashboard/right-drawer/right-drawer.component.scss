@@ -1,0 +1,64 @@
+@import '../../../../scss/variables/colors.scss';
+
+:host {
+  * {
+    box-sizing: border-box;
+  }
+
+  width: 801px;
+  height: 100%;
+  border-left: 1px solid $border-color;
+  box-shadow: -1px 0px 2px 2px rgba(219, 228, 233, 0.35);
+  background-color: $white;
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 0 12px;
+  overflow: hidden;
+  z-index: 999;
+  // transition: 0.2s linear;
+  margin-right: -100%; // hide
+
+  &.show {
+    margin-right: 0;
+  }
+}
+
+.loader {
+  position: absolute;
+  display: initial;
+  background: none;
+}
+
+.mat-tab-group {
+  margin-top: 0;
+}
+
+::ng-deep.mat-tab-label,
+::ng-deep.mat-tab-label-active {
+  min-width: 0 !important;
+  padding: 0 22px !important;
+}
+
+.topo-detail-container {
+  // position: absolute;
+  // top: 0;
+  // bottom: 0;
+  // left: 0;
+  // right: 0;
+  z-index: 4;
+  background-color: white;
+
+  .toobar-container {
+    position: relative;
+
+    button.return-btn {
+      left: 5px;
+    }
+
+    button.refresh-btn {
+      position: absolute;
+      right: 5px;
+    }
+  }
+}

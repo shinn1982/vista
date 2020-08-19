@@ -1,0 +1,19 @@
+<div class="panel-title">
+  <div class="title-left">
+    {{ 'POLICY_DASHBOARD_CURRENT_CPATH_VIS' | translate}}
+  </div>
+  <div class="title-right">
+    <button mat-icon-button disableRipple (click)="closePanel()" color="primary" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<div class="panel-content">
+  <div *ngFor="let path of pathList">
+    <ng-container *ngIf="!path.multiPath">
+      <div class="legend-line" [ngStyle]="{'border-top-color':path.color }"></div>
+      <div class="legend-path-name">{{path.name}}</div>
+    </ng-container>
+  </div>
+</div>

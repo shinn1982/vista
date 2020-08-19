@@ -1,0 +1,246 @@
+@import "./variables/colors.scss";
+
+svg {
+  &.svg-content-responsive {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    // right: 0;
+    z-index: 0;
+  }
+  .nodeLabels {
+    paint-order: stroke;
+    stroke-width: 5px;
+    stroke: $topo-node-stroke;
+    fill: $topo-node-fill;
+  }
+
+  .icons {
+    width: 25px !important;
+    height: 25px !important;
+  }
+
+  .link {
+    cursor: pointer;
+
+    .bigColorPath {
+      stroke-width: 8px;
+    }
+
+    path {
+      fill: none;
+      opacity: 1;
+
+      &.basic {
+        stroke: $topo-basic-link-color;
+      }
+
+      &.pathed {
+        opacity: 0.7;
+        stroke: mat-color($warn, 300);
+      }
+
+      &.hovered {
+        opacity: 1;
+        stroke: $topo-select-link-color;
+      }
+
+      &.selected {
+        opacity: 1;
+        stroke: $topo-select-link-color;
+      }
+
+      &.disabled {
+        stroke-dasharray: 10;
+        pointer-events: none;
+        stroke: $topo-basic-link-color;
+      }
+
+      &.down {
+        stroke-dasharray: 10;
+        stroke: $topo-down-link-color;
+      }
+
+      &.base {
+        stroke: $topo-disabled;
+      }
+
+      &.segment {
+        opacity: 1;
+        stroke: mat-color($primary, 600);
+      }
+    }
+
+    .linkLabels {
+      cursor: default;
+    }
+  }
+
+  .colorPathG {
+    &.green {
+      stroke: $topo-green;
+    }
+
+    &.red {
+      stroke: $topo-red;
+    }
+
+    &.yellow {
+      stroke: $topo-yellow;
+    }
+
+    &.base {
+      stroke: $topo-disabled;
+    }
+
+    &.disabled {
+      stroke: $topo-basic-link-color;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .colorPath {
+      fill: none;
+    }
+  }
+
+  .node {
+    cursor: auto;
+
+    circle {
+      fill: $topo-normal-node;
+      cursor: pointer;
+
+      &.pseudo {
+        fill: $topo-pn-node;
+        cursor: auto;
+      }
+
+      &.pathed {
+        fill: mat-color($warn, 400);
+      }
+
+      &.hovered {
+        fill: $blue500;
+        stroke: mat-color($primary, 200);
+        fill-opacity: 1;
+        stroke-width: 3px;
+        stroke: $topo-select-stroke-color;
+      }
+
+      &.selected {
+        fill: $topo-sel-color;
+        stroke: mat-color($primary, 200);
+        fill-opacity: 1;
+        stroke-width: 3px;
+        stroke: $topo-select-stroke-color;
+      }
+
+      &.disabled {
+        fill: $topo-disabled;
+        cursor: default;
+      }
+
+      &.segment {
+        fill: $topo-sel-color;
+        stroke: $topo-select-stroke-color;
+        opacity: 1;
+        stroke-width: 3px;
+        stroke-opacity: 1;
+      }
+    }
+  }
+
+  .transparency {
+    opacity: 0.4;
+  }
+
+  .transparency_node {
+    fill: #cfe7ff !important;
+  }
+
+  text {
+    fill: mat-color($accent, 600);
+    display: block;
+
+    &.number {
+      fill: mat-color($warn, 400);
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    &.tag {
+      fill: $topo-text-tag-fill;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    &.basic {
+      fill: $topo-text-basic-fill;
+    }
+
+    &.green {
+      fill: $topo-green;
+    }
+
+    &.red {
+      fill: $topo-red;
+    }
+
+    &.yellow {
+      fill: $topo-yellow;
+    }
+
+    &.disabled {
+      fill: $topo-disabled;
+      opacity: 0;
+    }
+  }
+
+  .marker {
+    path {
+      &.basic {
+        fill: $topo-basic-link-color;
+      }
+
+      &.green {
+        fill: $topo-green;
+      }
+
+      &.red {
+        fill: $topo-red;
+      }
+
+      &.yellow {
+        fill: $topo-yellow;
+      }
+
+      &.disabled {
+        fill: $topo-basic-link-color;
+      }
+
+      &.down {
+        fill: $topo-down-link-color;
+      }
+
+      &.base {
+        fill: $topo-disabled;
+      }
+      &.segment {
+        opacity: 1;
+        stroke: mat-color($primary, 600);
+      }
+
+      &.selected {
+        fill: $topo-select-link-color;
+      }
+    }
+  }
+}
+
+.as-text-name {
+  fill:red;
+}
+path.cpath-seg {
+  opacity: .75;
+}

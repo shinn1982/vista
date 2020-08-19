@@ -1,0 +1,67 @@
+<div class="below-area-container">
+  <div class="accordion noselect filterCond" #filterDiv>
+
+    <div class="accordion-title d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <mat-icon color="primary">filter_list</mat-icon>
+        <span>{{'TOPO_SIDEBAR_FILTER_LABEL' | translate}}</span>
+      </div>
+      <i class="icon-down pull-right" (click)="toggleShowFilter()" [class.up]="flags.showFilter"></i>
+    </div>
+
+    <div class="accordion-content full-height" [hidden]="!flags.showFilter">
+
+      <div class="form-group">
+        <input type="text" placeholder="" [(ngModel)]="searchTxt" (ngModelChange)="searchNode()">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="accordion accordion-tree noselect">
+    <div class="accordion-title d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center">
+        <mat-icon color="primary">list</mat-icon>
+        <span>{{'TOPO_SIDEBAR_TREE_LABEL' | translate}}</span>
+      </div>
+    </div>
+
+    <div class="accordion-content tree-content">
+      <div class="tree-action d-flex justify-content-end">
+        <a href="javascript:void(0)" [class.inactive]="sortOptions.sortKey === 'node_ip'"
+          (click)="sortByKey('display_name')">
+          <mat-icon color="primary" *ngIf="sortOptions.sortKey === 'display_name' && sortOptions.sortOrder === 'asc'"
+            class="img-sort horizontal-flip">sort</mat-icon>
+          <mat-icon color="primary" *ngIf="sortOptions.sortKey === 'display_name' && sortOptions.sortOrder === 'desc'"
+            class="img-sort">sort</mat-icon>
+        </a>
+      </div>
+
+      <perfect-scrollbar class="tree-scroll">
+        <div class="tree">
+          <ul *ngIf="nodeList.length" class="indented">
+            <li class="no_line" *ngFor="let node of nodeList">
+              <div *ngIf="node.visible !== false">
+                <!-- node  -->
+                <div class="node" [class.hidden]="node.visible === false">
+
+                  <a href="javascript:void(0);" [class.active]="node.active === true"
+                    [class.focused]="node.focused === true" (click)="onTreeNodeClick(node)"
+                    data-id="{{node.id}}">
+                    <span class="node-name node-hostname">{{node.display_name }}</span>
+
+                  </a>
+                </div>
+                <!-- /end node -->
+
+              </div>
+
+            </li>
+          </ul>
+        </div>
+      </perfect-scrollbar>
+    </div>
+
+  </div>
+
+</div>

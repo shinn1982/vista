@@ -1,0 +1,55 @@
+<mat-toolbar class="menu mat-body mat-elevation-z3">
+  <div class="navbar-icon"></div>
+  <a routerLink="policy-dashboard" routerLinkActive="active">
+    {{ 'HEADER_NAVBAR_POLICY_DASHBOARD' | translate }}
+  </a>
+  <a>
+    重优化管理
+  </a>
+  <a>
+    参数管理
+  </a>
+  <a>
+    Snapshot管理
+  </a>
+
+  <div class="menu-right">
+
+    <button mat-button class="space-trigger" [matMenuTriggerFor]="spaceMenu" [hidden]="flgs.noSpace">
+      <mat-icon color="primary">place</mat-icon>
+      <span>{{'COMMON_USED_LABEL_CURRENT' | translate}} Snapshot: </span>
+      <span>{{(currentSpace ? currentSpace.space_name : translate.instant('COMMON_USED_LABEL_NO') +'Snapshot')}}</span>
+    </button>
+    <button mat-button class="space-trigger" [hidden]="!flgs.noSpace">
+      <mat-icon color="primary">place</mat-icon>
+      <span>{{'COMMON_USED_LABEL_CURRENT' | translate}} Snapshot: </span>
+      <span>{{(currentSpace ? currentSpace.space_name :  translate.instant('COMMON_USED_LABEL_NO') +'Snapshot')}}</span>
+    </button>
+    <mat-menu #spaceMenu="matMenu" [hidden]="flgs.noSpace" class="menu-panel-header-space">
+      <!-- <perfect-scrollbar class="perfect_scrollbar max-height-scrollbar"> -->
+      <a *ngFor="let space of spaceList" mat-menu-item (click)="changeSpace(space)"
+        [ngClass]="{'currentSpace':(currentSpace ? currentSpace.space_name : '')===space.space_name}">
+        <span>{{space.space_name}}</span>
+      </a>
+      <!-- </perfect-scrollbar> -->
+    </mat-menu>
+
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon class="user-icon">account_circle</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu" class="menu-panel-header-user">
+      <a mat-menu-item (click)="openEdit()">
+        {{userInfo.username}}
+        <mat-icon color="primary">edit</mat-icon>
+      </a>
+      <a *ngIf="currentLang === 'zh-Hans'" mat-menu-item (click)="changeLanguage('en-US')"
+        color="primary">{{ 'COMMON_LANG_LABEL_EN' | translate }}</a>
+      <a *ngIf="currentLang === 'en-US'" mat-menu-item (click)="changeLanguage('zh-Hans')"
+        color="primary">{{ 'COMMON_LANG_LABEL_CN' | translate }}</a>
+      <a (click)="signOut()" mat-menu-item routerLinkActive="active">
+        {{'HEADER_LOGOUT' | translate}}
+      </a>
+    </mat-menu>
+
+  </div>
+</mat-toolbar>

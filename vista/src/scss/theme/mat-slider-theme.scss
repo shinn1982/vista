@@ -1,0 +1,74 @@
+@import '~@angular/material/theming';
+
+$custom-primary: (500 : #1a73e8,
+  600 : #1a73e8,
+  contrast: (200: #3c464d,
+  ));
+
+$primary: mat-palette($custom-primary, $default: 600, $lighter: 500, $darker: 500);
+$accent: mat-palette($mat-blue-gray, 800);
+$warn: mat-palette($mat-amber, 600);
+$themeCust: (primary: $primary,
+  accent: $accent,
+  warn: $warn,
+  is-dark: false,
+  foreground: $mat-light-theme-foreground,
+  background: $mat-light-theme-background,
+);
+
+@mixin slider-custom {
+  @include mat-slider-theme($themeCust);
+  @include mat-slide-toggle-theme($themeCust);
+  @include mat-slide-toggle-content-custom($themeCust);
+  $foreground: map-get($themeCust, foreground);
+  $thumb-checked-hue: 600;
+
+  .mat-slide-toggle {
+    @include mat-slide-checked-custom($accent, $thumb-checked-hue);
+
+    &.mat-primary {
+      @include mat-slide-checked-custom($primary, $thumb-checked-hue);
+    }
+
+    &.mat-warn {
+      @include mat-slide-checked-custom($warn, $thumb-checked-hue);
+    }
+
+    &:not(.mat-checked) {
+      @include mat-slide-thumb();
+
+      .mat-ripple-element {
+        background-color: mat-color($foreground, base);
+      }
+    }
+  }
+}
+
+@mixin mat-slide-toggle-content-custom($theme) {
+  $primary: map-get($theme, primary);
+  .mat-slide-toggle-content {
+    font-size: 13px;
+    color: mat-contrast($primary, 200);
+    min-width: 80px;
+  }
+}
+
+@mixin mat-slide-checked-custom($palette, $thumb-checked-hue) {
+  &.mat-checked {
+    @include mat-slide-thumb();
+
+    .mat-slide-toggle-bar {
+      background-color: mat-color($palette, $thumb-checked-hue);
+    }
+
+    .mat-ripple-element {
+      background-color: mat-color($palette, $thumb-checked-hue);
+    }
+  }
+}
+
+@mixin mat-slide-thumb() {
+  .mat-slide-toggle-thumb {
+    background-color: white;
+  }
+}

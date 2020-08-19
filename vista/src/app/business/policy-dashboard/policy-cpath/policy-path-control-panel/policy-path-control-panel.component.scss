@@ -1,0 +1,43 @@
+@import "../../../../../scss/variables/colors.scss";
+
+:host {
+  position: absolute;
+  top: 20px;
+  left: 95px;
+  border: #b2babe 1px solid;
+  background: rgba(255, 255, 255, .7);
+  min-width: 240px;
+}
+
+.panel-title {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #b2babe;
+  padding: 5px 10px;
+
+  .title-right {
+    margin-left: 4em;
+
+    button.close-btn {
+      margin-left: 10px;
+    }
+  }
+}
+
+.panel-content {
+  padding: 5px 10px;
+
+  .legend-line {
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    border-top: solid #93c913 4px;
+    margin-right: 8px;
+  }
+
+  .legend-path-name {
+    display: inline-block;
+  }
+}

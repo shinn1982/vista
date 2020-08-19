@@ -1,0 +1,21 @@
+
+<div class="dialog-title" [ngClass]="{'info': data.type==='info','warn': data.type==='warn','error': data.type==='error'}">
+  <div class="alter-icon">
+    <mat-icon *ngIf="data.type==='info'">info</mat-icon>
+    <mat-icon *ngIf="data.type==='warn'">help_outline</mat-icon>
+    <mat-icon *ngIf="data.type==='error'">error</mat-icon>
+  </div>
+  <div class="alert-title">
+    <span *ngIf="data.alertTitle">{{data.alertTitle}}</span>
+  </div>
+</div>
+<div class="dialog-content">
+  <p class="alert-message" *ngIf="data.alertContent">{{data.alertContent}}</p>
+</div>
+<div class="dialog-actions">
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button color="primary"
+    [mat-dialog-close]="true">{{data.btnConfirm}}</button>
+  <button *ngIf="data.multipleButton" class="mat-elevation-z0" color="primary" tabindex="-1" mat-raised-button
+    [mat-dialog-close]="'notAll'">{{data.btnExportThousand}}</button>
+  <button class="mat-elevation-z0 btn-cancel" tabindex="-1" mat-raised-button mat-dialog-close>{{data.btnCancel}}</button>
+</div>

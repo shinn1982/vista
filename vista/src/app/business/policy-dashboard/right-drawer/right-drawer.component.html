@@ -1,0 +1,33 @@
+<!-- Path tables -->
+<div class="mat-elevation-z0" [hidden]="flgs.showPathCreate || flgs.showPathDetail || detailFlag">
+  <app-path-table (openPathDetailEvent)="showPathDetail($event)" (openPathCreateEvent)="showPathCreate($event)"></app-path-table>
+</div>
+
+<!-- path detail -->
+<app-path-detail *ngIf="flgs.showPathDetail" [pathInfo]="currentPath" (closePathDetailEvent)="hidePathDetail($event)">
+</app-path-detail>
+
+<!-- path create -->
+<app-path-create *ngIf="flgs.showPathCreate" [pathInfo]="currentPath" (closePathCreateEvent)="hidePathCreate($event)">
+</app-path-create>
+
+<app-topology-detail *ngIf="detailFlag" [selectElements]="selectElements" [filterValue]="filterValue"
+    (closeTopoDetailEvent)="closeTopoDetail()">
+</app-topology-detail>
+
+<!-- topo detail -->
+<!-- <div class="topo-detail-container" *ngIf="detailFlag">
+  <div class="toobar-container">
+    <button mat-icon-button class="return-btn" color="primary" (click)="closeTopoDetail()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <app-topology-detail class="topo-detail" [selectElements]="selectElements" [filterValue]="filterValue"
+    (closeTopoDetailEvent)="closeTopoDetail()">
+  </app-topology-detail>
+</div> -->
+
+<!-- loading -->
+<div class="loader" *ngIf="flgs.showLoader">
+  <mat-progress-bar color="primary" mode="indeterminate"></mat-progress-bar>
+</div>

@@ -1,0 +1,36 @@
+{"frames": {
+
+"headend":
+{
+	"frame": {"x":111,"y":1,"w":63,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":63,"h":95},
+	"sourceSize": {"w":63,"h":95}
+},
+"node":
+{
+	"frame": {"x":1,"y":1,"w":108,"h":108},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":108,"h":108},
+	"sourceSize": {"w":108,"h":108}
+},
+"tailend":
+{
+	"frame": {"x":176,"y":1,"w":63,"h":95},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":63,"h":95},
+	"sourceSize": {"w":63,"h":95}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "vistaUI.png",
+	"format": "RGBA8888",
+	"size": {"w":240,"h":110},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8f96ea981b2eb317c88d3d4ebbc4dc20:748986d150dc6029ddae482cba473e7d:5788c2411120b308b83c960dbb2196a1$"
+}
+}

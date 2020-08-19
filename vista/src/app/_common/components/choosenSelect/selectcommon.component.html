@@ -1,0 +1,135 @@
+<div class="cpu-select">
+  <div *ngIf="!options.filter && options.type==='basic' && !options.filter_input" (focusin)="showList(true,$event)"
+    class="frame" id="selectFram_{{frameId}}" [ngClass]="{'disabled':flgs.disabledFlg}">
+    <div class="input-div" id="input_div_{{frameId}}">
+      <span id="span_out_{{frameId}}">
+        <span id="span_in_{{frameId}}">{{selectedObj['label']}}</span>
+      </span>
+      <div class="icon-div" id="icon_div_{{frameId}}">
+        <i class="fa" [ngClass]="{'fa-angle-down':flgs.showlistFlg,'fa-angle-up':!flgs.showlistFlg}"
+          id="icon_{{frameId}}"></i>
+      </div>
+    </div>
+    <ul class="select-ul" [ngClass]="{'open':flgs.showlistFlg,'hide':!flgs.showlistFlg}">
+      <li *ngFor="let perData of options.data" (click)="selectOption(perData,$event)"
+        [ngClass]="{'checked':perData['label']===selectedObj['label'],'disabled':perData['disabled']}">
+        <span>{{perData['label']}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- input filter -->
+
+
+  <div *ngIf="!options.filter && options.type==='basic'&& options.filter_input" class="frame"
+    [ngClass]="{'disabled':flgs.disabledFlg,'intput-select':options.filter_input}" id="selectFram_{{frameId}}">
+    <div class="input-div" id="input_div_{{frameId}}">
+      <input type="text" id="input_{{frameId}}" [(ngModel)]="inputFilterLabel" (ngModelChange)="filterByPipe()"
+        (focus)="filterByPipe()">
+    </div>
+    <ul class="select-ul" [ngClass]="{'open':flgs.showlistFlg,'hide':!flgs.showlistFlg}">
+      <li *ngFor="let perData of matchData" (click)="selectOption(perData,$event)"
+        [ngClass]="{'checked':perData['label']===selectedObj['label'],'disabled':perData['disabled']}">
+        <span>{{perData['label']}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- normal filter -->
+
+  <div *ngIf=" options.type==='basic' && !options.filter_input && options.filter" (click)="showList(true,$event)"
+    class="frame" id="selectFram_{{frameId}}" [ngClass]="{'disabled':flgs.disabledFlg}">
+    <div class="input-div" id="input_div_{{frameId}}">
+      <span id="span_out_{{frameId}}">
+        <span id="span_in_{{frameId}}">{{selectedObj['label']}}</span>
+      </span>
+      <div class="icon-div" id="icon_div_{{frameId}}">
+        <i class="fa" id="icon_{{frameId}}"
+          [ngClass]="{'fa-angle-down':flgs.showlistFlg,'fa-angle-up':!flgs.showlistFlg}"></i>
+      </div>
+    </div>
+    <ul class="select-ul" [ngClass]="{'open':flgs.showlistFlg,'hide':!flgs.showlistFlg}">
+      <li class="filter_li" name="select-li">
+        <input type="text" [(ngModel)]="inputFilterLabel" (ngModelChange)="filterByPipe()">
+        <i class=" fa fa-search "></i>
+      </li>
+      <li *ngFor="let perData of matchData " (click)="selectOption(perData,$event) " [ngClass]="{ 'checked':perData[
+                'label']===selectedObj[ 'label'], 'disabled':perData[ 'disabled']} " name="select-li">
+        <span>{{perData['label']}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- multi_select-->
+
+  <div *ngIf="!options.filter  && !options.filter_input && options.type==='multi'" (focusin)="showList(true,$event)"
+    class="frame" id="selectFram_{{frameId}}" [ngClass]="{'disabled':flgs.disabledFlg}">
+    <div class="input-div input-div-multi" id="input_div_{{frameId}}">
+      <span *ngFor="let perData of selectedDataList" class="span-block" id="span_out_{{frameId}}">
+        {{perData['label']}} &nbsp;<i class="fa fa-times" (click)="delSelectedData(perData,$event)"
+          id="close_icon_{{frameId}}"></i>
+      </span>
+      <div class="icon-div" id="icon_div_{{frameId}}">
+        <i class="fa" [ngClass]="{'fa-angle-down':flgs.showlistFlg,'fa-angle-up':!flgs.showlistFlg}"
+          id="icon_{{frameId}}"></i>
+      </div>
+    </div>
+    <ul class="select-ul" [ngClass]="{'open':flgs.showlistFlg,'hide':!flgs.showlistFlg}">
+      <li *ngFor="let perData of options.data" (click)="selectOption(perData,$event)"
+        [ngClass]="{'checked':perData['checked'],'disabled':perData['disabled'],'group-normal':!perData['disabled']           }">
+        <span>{{perData['label']}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- multi filter select-->
+
+  <div *ngIf="options.filter  && !options.filter_input && options.type==='multi'" (click)="showList(true,$event)"
+    class="frame" id="selectFram_{{frameId}}" [ngClass]="{'disabled':flgs.disabledFlg}">
+    <div class="input-div input-div-multi" id="input_div_{{frameId}}">
+      <span *ngFor="let perData of selectedDataList" class="span-block" id="span_out_{{frameId}}">
+        {{perData['label']}} &nbsp;<i class="fa fa-times" (click)="delSelectedData(perData,$event)"
+          id="close_icon_{{frameId}}"></i>
+      </span>
+      <div class="icon-div" id="icon_div_{{frameId}}">
+        <i class="fa" id="icon_{{frameId}}"
+          [ngClass]="{'fa-angle-down':flgs.showlistFlg,'fa-angle-up':!flgs.showlistFlg}"></i>
+      </div>
+    </div>
+    <ul class="select-ul" [ngClass]="{'open':flgs.showlistFlg,'hide':!flgs.showlistFlg}">
+      <li class="filter_li" name="select-li">
+        <input type="text" [(ngModel)]="inputFilterLabel" (ngModelChange)="filterByPipe()">
+        <i class=" fa fa-search "></i>
+      </li>
+      <li *ngFor="let perData of matchData" (click)="selectOption(perData,$event)"
+        [ngClass]="{'checked':perData['checked'],'disabled':perData['disabled']}">
+        <span>{{perData['label']}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!--group-->
+  <div *ngIf="options.type==='group' " (focusin)="showList(true,$event)" class="frame group-select"
+    id="selectFram_{{frameId}}" [ngClass]="{'disabled':flgs.disabledFlg}">
+    <div class="input-div" id="input_div_{{frameId}}">
+      <span id="span_out_{{frameId}}">
+        <span id="span_in_{{frameId}}">{{selectedObj['label']}}</span>
+      </span>
+      <div class="icon-div" id="icon_div_{{frameId}}">
+        <i class="fa" [ngClass]="{'fa-angle-down':flgs.showlistFlg,'fa-angle-up':!flgs.showlistFlg}"
+          id="icon_{{frameId}}"></i>
+      </div>
+    </div>
+    <ul class="select-ul"
+      [ngClass]="{'open':flgs.showlistFlg,'hide':!flgs.showlistFlg,'group-select-ul':options.type==='group'}">
+      <li *ngFor="let bigObj of options.data">
+        <span class="group-label">{{bigObj['label']}}</span>
+        <ul>
+          <li *ngFor="let perData of bigObj.data" (click)="selectOption(perData,$event)">
+            <span class="">{{perData['label']}}</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</div>

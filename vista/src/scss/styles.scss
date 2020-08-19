@@ -1,0 +1,68 @@
+@import "./theme.scss";
+@import "./reset.scss";
+@import "./variables/variable.scss";
+@import "./variables/image-path.scss";
+@import "./variables/colors.scss";
+@import "./_font.scss";
+@import "~perfect-scrollbar/css/perfect-scrollbar.css";
+@import "./_breadCrumb.scss";
+@import "./_topo.scss";
+@import "./_mat-tab.scss";
+@import "./_materialIcons.scss";
+@import "./_loader.scss";
+@import "./form";
+@import "./_table.scss";
+@import "./_button.scss";
+@import "./_subpage.scss";
+@import "./_detail.scss";
+@import "./panel.scss";
+@import "./stepper.scss";
+@import "./_toolbar.scss";
+@import "./_radio.scss";
+@import "./_mat-tab.scss";
+@import "./_topo.scss";
+@import "./select";
+@import "~perfect-scrollbar/css/perfect-scrollbar.css";
+@import "./segment";
+@import "./toggleButton";
+@import "./_status.scss";
+@import "./block-div.scss";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+html,
+body {
+  font-family: $font-family-config;
+  color: #333; // overflow: hidden;
+  .main-container {
+    padding: 20px 24px;
+    // min-width: 1440px;
+    width: 100vw;
+  }
+}
+
+.custom-dialog-panel {
+  padding: 0;
+  .mat-dialog-container {
+    padding: 0;
+    .mat-dialog-title {
+      height: 60px;
+      background: red;
+      .mat-dialog-content {
+        margin: 0;
+        padding: 24px;
+        min-height: 2em;
+      }
+    }
+  }
+}
+
+

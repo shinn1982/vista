@@ -1,0 +1,56 @@
+@import '../../../../scss/theme.scss';
+
+.bread-crumb {
+  margin-top: -20px;
+}
+
+.add-user {
+  display: flex;
+  height: 36px;
+
+  &>*:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.mat-table {
+  .mat-header-row .mat-header-cell {
+    padding-left: 0;
+    padding-right: 0;
+
+    &:last-child {
+      width: 200px !important;
+    }
+  }
+
+  .mat-row .mat-cell {
+    padding-left: 0;
+    padding-right: 0;
+
+    .mat-button {
+      text-align: center;
+    }
+
+    &:last-child {
+      width: 200px !important;
+    }
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+.btn-div {
+  text-align: right;
+  padding-top: 10px;
+
+  button.return-btn {
+    border: 1px solid #e1e5ea;
+    color: mat-color($primary);
+  }
+}

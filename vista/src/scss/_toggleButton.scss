@@ -1,0 +1,32 @@
+@import "./variables/colors.scss";
+
+/**
+    * must set attr  appearance="legacy"  
+*/
+
+.mat-button-toggle-group {
+  box-shadow: none !important; // border: solid 1px #d3d3d3;
+
+  .mat-button-toggle {
+    color: $normal-color !important;
+    border-bottom: solid 2px $basic-bg;
+  }
+
+  .mat-button-toggle-checked,
+  .cdk-focused,
+  .cdk-program-focused {
+    color: $normal-color !important;
+    border-bottom: solid 2px $blue600;
+    background: $basic-bg !important;
+    .mat-button-toggle-label-content {
+      color: $blue600;
+    }
+  }
+}
+.time-toggle {
+  height: 36px;
+  margin-right: 5px;
+  .mat-button-toggle-label-content {
+    padding: 0 10px;
+  }
+}

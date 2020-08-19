@@ -1,0 +1,17 @@
+@import './variables/colors.scss';
+
+.status-active {
+  color: $status-active-color;
+}
+
+.status-error {
+  color: $status-error-color;
+}
+
+.status-none {
+  color: $status-none-color;
+}
+
+.status-warning {
+  color: $status-warning-color;
+}

@@ -1,0 +1,55 @@
+@import '../../../../scss/variables/colors.scss';
+
+.dialog-title {
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &.info {
+    background: $status-active-color;
+  }
+  &.warn {
+    background: $status-warning-color;
+  }
+  &.error {
+    background: $status-error-color;
+  }
+
+  .alter-icon {
+    text-align: center;
+    .mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #ffffff;
+    }
+  }
+  .alert-title {
+    font-size: 26px;
+    color: #fff;
+    font-weight: 600;
+    padding-left: 4px;
+  }
+}
+
+.dialog-content {
+  padding: 24px;
+  
+  .alert-content {
+    padding: 1em 0;
+    text-align: center;
+  }
+}
+
+.dialog-actions {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-end;
+  .btn-cancel {
+    border: #ccc 1px solid;
+    line-height: 30px !important;
+    color: $status-none-color;
+    margin-left: 10px;
+  }
+}
+

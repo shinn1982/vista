@@ -1,0 +1,35 @@
+<div mat-dialog-title class="policy-cpath-switch-panel-title">
+  {{ 'POLICY_DASHBOARD_SWITCH_CPATH_VIS' | translate }}
+</div>
+<div mat-dialog-content class="policy-cpath-switch-panel-content">
+  <perfect-scrollbar>
+    <div class="section-container" *ngIf="forwardingList && forwardingList.length>0">
+      <div class="section-title">Forwarding</div>
+      <ul class="section-content-ul">
+        <li class="section-content-li" *ngFor="let item of forwardingList">
+          <mat-checkbox color="primary" [value]="item" [checked]="match(item)" (change)="checkedChange($event, item)">
+            {{ item.c_path_name }} ({{item.active ? 'Active' :  'Inactive'}})</mat-checkbox>
+        </li>
+      </ul>
+    </div>
+
+    <div class="section-container" *ngIf="policyList && policyList.length>0">
+      <div class="section-title">Policy</div>
+      <ul class="section-content-ul">
+        <li class="section-content-li" *ngFor="let item of policyList">
+          <mat-checkbox color="primary" [value]="item" [checked]="match(item)" (change)="checkedChange($event, item)">
+            {{ item.c_path_name }} ({{item.active ? 'Active' :  'Inactive'}})</mat-checkbox>
+
+        </li>
+      </ul>
+    </div>
+  </perfect-scrollbar>
+</div>
+<mat-dialog-actions>
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button color="primary" [disabled]="selectedPathVisList.length === 0" (click)="save()">
+    {{'COMMON_USED_LABEL_BTN_CONFIRM' | translate}}
+  </button>
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button mat-dialog-close>
+    {{'COMMON_USED_LABEL_BTN_CANCEL' | translate}}
+  </button>
+</mat-dialog-actions>

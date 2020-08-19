@@ -1,0 +1,21 @@
+/* make sure to set some focus styles for accessibility */
+:focus {
+  outline: 0;
+}
+
+body {
+	line-height: 1;
+}
+
+ol, ul, li {
+	list-style: none;
+}
+
+.hidden,
+[hidden] {
+  display: none !important;
+}
+
+a {
+  text-decoration: none;
+}

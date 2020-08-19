@@ -1,0 +1,83 @@
+<div class="toolbar">
+  <div class="left-btns">
+    <button mat-raised-button class="mat-elevation-z0" color="primary" (click)="openCreate()"
+      *ngIf="role !== 'operator'">{{ 'COMMON_USED_LABEL_CREATE' | translate}}</button>
+    <button mat-raised-button class="mat-elevation-z0" color="primary" [disabled]="!isOneSelected()"
+      (click)="openEdit()" *ngIf="role !== 'operator'">{{ 'COMMON_USED_LABEL_EDIT' | translate}}</button>
+    <button mat-raised-button class="mat-elevation-z0" color="primary" (click)="openDelete()"
+      [disabled]="!selection.hasValue()"
+      *ngIf="role !== 'operator'">{{ 'COMMON_USED_LABEL_DELETE' | translate}}</button>
+  </div>
+  <div>
+    <mat-form-field class="search">
+      <input matInput #filter placeholder="{{'COMMON_USED_LABEL_SEARCH' | translate}}">
+      <i matSuffix class="material-icons">search</i>
+    </mat-form-field>
+    <button mat-icon-button class="icon-btn" (click)="getUsers()">
+      <span class="refresh-icon-gray"></span>
+    </button>
+  </div>
+</div>
+
+<div class="mat-elevation-z0">
+  <table mat-table class="main-table" [dataSource]="dataSource" matSort matSortActive="{{tableParams.orderBy}}" matSortDirection="{{tableParams.order}}">
+
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef class="checkbox">
+        <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
+          [checked]="selection.hasValue() && isAllSelected()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()">
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row" class="checkbox">
+        <mat-checkbox color="primary" (click)="$event.stopPropagation()"
+          (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="username">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 15%;"> {{ 'USER_TABLE_HEADER_USERNAME' | translate }} </th>
+      <td mat-cell *matCellDef="let row"> {{row.username}} </td>
+    </ng-container>
+    <ng-container matColumnDef="alias">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 15%;"> {{'USER_TABLE_HEADER_ALIAS' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.alias?row.alias:''}} </td>
+    </ng-container>
+    <ng-container matColumnDef="phone_number">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 15%;"> {{'USER_TABLE_HEADER_PHONE_NUMBER' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.phone_number}} </td>
+    </ng-container>
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 15%;"> {{'USER_TABLE_HEADER_EMAIL' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.email}} </td>
+    </ng-container>
+    <ng-container matColumnDef="updated_on">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'COMMON_USED_LABEL_UPDATE_ON' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.updated_on | formatTime }} </td>
+    </ng-container>
+    <ng-container matColumnDef="visited_on">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'USER_TABLE_HEADER_VISITED_ON' | translate}} </th>
+      <td mat-cell *matCellDef="let row"> {{row.visited_on | formatTime }} </td>
+    </ng-container>
+    <ng-container matColumnDef="detail">
+      <th mat-header-cell *matHeaderCellDef> {{'COMMON_USED_LABEL_ACTION' | translate}} </th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button color="primary" [matMenuTriggerFor]="detailMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #detailMenu="matMenu">
+          <a mat-menu-item (click)="openDetail(row.id)">
+            {{'USER_DETAIL' | translate}}
+          </a>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator [length]="tableParams.numOfAll" [pageIndex]="tableParams.pageIndex" [pageSize]="tableParams.pageSize"
+    [pageSizeOptions]="tableParams.pageSizeOptions" [hidden]="dataSource.data.length===0">
+  </mat-paginator>
+</div>

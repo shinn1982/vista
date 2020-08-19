@@ -1,0 +1,14 @@
+{
+    "/api": {
+      "target": "http://10.124.209.5:8001",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/mockApi": {
+      "target": "http://10.79.148.15:3356",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }

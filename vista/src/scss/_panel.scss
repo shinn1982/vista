@@ -1,0 +1,61 @@
+// angular material component panelClass 
+
+.select-panel-space-user-role,
+.select-panel-traffic {
+    // min-width: 200px !important;
+    margin-top: 25px;
+}
+.select-panel-group-create {
+    // min-width: 200px !important;
+    margin-top: 35px;
+}
+.select-panel-ipv4-nlri-type {
+  max-height: unset !important;
+}
+.menu-panel-header-space {
+    margin-top: 5px;
+    min-width: 200px !important;
+    border-radius: 2px !important;
+}
+.menu-panel-header-user {
+  mat-icon {
+    font-size: 15px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+  }
+}
+.panel-body {
+  .mat-form-field {
+    width: 100%;
+  }
+}
+
+.tooltip-ipv4-prefix-preview {
+  width: auto;
+  max-width: 50vw !important;
+  display: inline-block;
+  padding: 5px;
+  position: absolute;
+  right: 0;
+  top: -25px;
+}
+
+.tooltip-sapce-name-reg {
+  white-space: pre;
+  max-width: unset !important;
+}
+
+.multiple-select {
+  min-width: 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  margin-left: 40px;
+}
+
+.name-autocomplete-panel {
+  mat-option {
+    height: 30px;
+    font-size: 13px;
+  }
+}

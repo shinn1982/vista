@@ -1,0 +1,29 @@
+variables:
+  GIT_SSL_NO_VERIFY: "1"
+
+stages:
+  - test
+  - build
+  - deploy
+
+build-base-image:
+  stage: build
+  tags:
+    - shell_frontend
+  script:
+    - docker build --build-arg HTTP_PROXY=http://proxy-wsa.esl.cisco.com:80 --build-arg HTTPS_PROXY=http://proxy-wsa.esl.cisco.com:80 -t containers.cisco.com/yare/vista-base -f Dockerfile.base .
+  only:
+    - master@yare/vista
+  when: manual
+
+
+docker-build-deploy:
+  stage: deploy
+  tags:
+    - shell_frontend
+  script:
+    - docker build -t container.cisco.com/vista:latest .
+    - if [ $(docker ps -aq --filter name=vista-frontend) ]; then docker rm -f vista-frontend;fi
+    - docker run -d --restart always --name vista-frontend -v /etc/localtime:/etc/localtime:ro -p 8080:80 container.cisco.com/vista:latest
+  only:
+    - master@yare/vista

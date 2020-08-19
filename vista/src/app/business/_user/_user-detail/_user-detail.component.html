@@ -1,0 +1,74 @@
+<div class="subpage-container detail-container">
+
+    <div class="bread-crumb">
+        <ul>
+            <li *ngFor="let perCrumb of breadCrumbData" [ngClass]="{'disabled':perCrumb.disabled }"
+                (click)="backToMainPage(perCrumb)">
+                {{perCrumb.label}}</li>
+        </ul>
+    </div>
+
+    <div class="subpage-content">
+        <div class="block-panel">
+            <div class="panel-header">
+                {{'COMMON_USED_LABEL_STEP_BASIC_INFO' | translate}}
+            </div>
+            <div class="panel-body detail-content">
+                <div class="basic-display">
+                    <div class="row">
+                        <span class="label">{{ 'USER_TABLE_HEADER_USERNAME' | translate }}</span>
+                        <span class="label-value">{{userDetail.username}}</span>
+                        <span class="label">{{'USER_TABLE_HEADER_ALIAS' | translate}}</span>
+                        <span class="label-value">{{userDetail.alias}}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">{{'USER_TABLE_HEADER_PHONE_NUMBER' | translate}}</span>
+                        <span class="label-value">{{userDetail.phone_number}}</span>
+                        <span class="label">{{'USER_TABLE_HEADER_EMAIL' | translate}}</span>
+                        <span class="label-value">{{userDetail.email}}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">{{'COMMON_USED_LABEL_UPDATE_ON' | translate}}</span>
+                        <span class="label-value">{{userDetail.updated_on | formatTime}}</span>
+                        <span class="label">{{'COMMON_USED_LABEL_CREATED_ON' | translate}}</span>
+                        <span class="label-value">{{userDetail.created_on | formatTime}}</span>
+                    </div>
+                    <div class="row">
+                        <span class="label">{{'USER_TABLE_HEADER_VISITED_ON' | translate}}</span>
+                        <span class="label-value">{{userDetail.visited_on | formatTime}}</span>
+                        <span class="label">{{'USER_DETAIL_DES' | translate}}</span>
+                        <span class="label-value">{{userDetail.description}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="block-panel">
+            <div class="panel-header">
+                {{'USER_DETAIL_SPACE_TITLE' | translate}} ( {{spaceDetail.length}} )
+            </div>
+            <div class="panel-body detail-content">
+                <table cellspacing="0" cellpadding="0" class="horizontal-table">
+                    <thead>
+                        <tr>
+                            <td>{{'USER_DETAIL_SPACE_NAME' | translate}}</td>
+                            <td>{{'USER_DETAIL_SPACE_ROLE' | translate}}</td>
+                            <td>{{'USER_DETAIL_SPACE_ADDED_ON' | translate}}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let space of spaceDetail; let i = index" [ngClass]="{'odd':i%2==1}">
+                            <td>{{space.space_name}}</td>
+                            <td>{{space.role}}</td>
+                            <td>{{space.added_on | formatTime}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="btn-div">
+            <button mat-stroked-button (click)="backToMainPage()">{{'COMMON_USED_LABEL_BTN_BACK' | translate}}</button>
+        </div>
+    </div>
+
+</div>

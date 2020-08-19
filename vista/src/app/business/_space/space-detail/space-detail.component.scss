@@ -1,0 +1,47 @@
+@import '../../../../scss/theme.scss';
+
+.basic-display {
+  .row {
+    .label {
+      &:nth-child(1) {
+        width: 10.4rem;
+      }
+
+      &:nth-child(3) {
+        width: 8.4rem;
+      }
+    }
+  }
+}
+
+.device-table {
+  table-layout: fixed;
+
+  thead {
+    td {
+      width: 33.3%;
+    }
+  }
+
+  .hostname-td {
+    word-break: break-all;
+    word-wrap: break-word;
+  }
+}
+
+.name-reg-label {
+  line-height: 20px;
+  padding-top: 10px;
+
+  span.name-reg-priority {
+    padding-right: 0.5%;
+  }
+
+  span.name-reg-value {
+    white-space: pre;
+  }
+
+  span.blue {
+    color: mat-color($primary);
+  }
+}

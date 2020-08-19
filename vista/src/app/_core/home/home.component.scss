@@ -1,0 +1,25 @@
+.main-container {
+  // padding: 40px 24px 30px;
+  background: #fff;
+  height: auto;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.alert-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #f44336;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  color: white;
+  overflow: hidden;
+  z-index: 999;
+}
+
+.hasLicenseMsg {
+  padding-top: 60px;
+}

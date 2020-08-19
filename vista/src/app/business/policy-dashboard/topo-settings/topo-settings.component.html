@@ -1,0 +1,120 @@
+<div mat-dialog-title>
+  {{'TOPO_SETTING_TITLE' | translate }}
+</div>
+<mat-dialog-content>
+  <perfect-scrollbar class="topo-setting-scrollbar">
+    <div class="setting-section node-setting">
+      <div class="setting-title">{{'TOPO_SETTING_NODE_DISPLAY' | translate}}</div>
+      <div class="setting-row">
+        <mat-slide-toggle [checked]="settingsObj.show_node_label.hostname" (change)="toggleNodeLabel('hostname')"
+          [disabled]="!currentTopo" color="primary">{{'TOPO_SETTING_NODE_NAME' | translate}}</mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_node_label.node_ip"
+          (change)="toggleNodeLabel('node_ip')" [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_NODE_IP' | translate}}
+        </mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_node_label.sr" (change)="toggleNodeLabel('sr')"
+          [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_SR' | translate}}
+        </mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_node_label.snmp" (change)="toggleNodeLabel('snmp')"
+          [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_SNMP' | translate}}
+        </mat-slide-toggle>
+      </div>
+      <div class="setting-row">
+        <mat-slide-toggle class="" [checked]="settingsObj.show_node_label.netconf" (change)="toggleNodeLabel('netconf')"
+          [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_NETCONF' | translate}}
+        </mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_node_label.bgp_epe"
+          (change)="toggleNodeLabel('bgp_epe')" [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_BGPEPE' | translate}}
+
+        </mat-slide-toggle>
+        <!-- <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_node_labgp_rrbel.bgp_rr" (change)="toggleNodeLabel('bgp_rr')"
+                  [disabled]="!currentTopo" color="primary">BGP RR</mat-slide-toggle> -->
+      </div>
+    </div>
+    <div class="setting-section link-setting">
+      <div class="setting-title">{{'TOPO_SETTING_LINK_DISPLAY' | translate}}</div>
+      <div class="setting-row">
+        <mat-slide-toggle class="" [checked]="settingsObj.show_link_label.show_ift_name" [disabled]="!currentTopo"
+          color="primary" (change)="interfaceName()">{{'TOPO_SETTING_PORT_NAME' | translate}}</mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_link_label.show_interface" (change)="interface()"
+          [disabled]="!currentTopo" color="primary">{{'TOPO_SETTING_PORT_IP' | translate}}</mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_link_label.show_load" (change)="load()"
+          [disabled]="!currentTopo" color="primary">{{'TOPO_SETTING_LOAD' | translate}}</mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_link_label.show_usage" (change)="usage()"
+          [disabled]="!currentTopo" color="primary">{{'TOPO_SETTING_USAGE'| translate}}</mat-slide-toggle>
+      </div>
+      <div class="setting-row">
+        <mat-slide-toggle class="" [checked]="settingsObj.show_link_label.show_arrow" (change)="arrow()"
+          [disabled]="!currentTopo" color="primary">{{'TOPO_SETTING_LINK_DIRECTION' | translate}}</mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_link_label.show_igp_metric"
+          (change)="metric('show_igp_metric')" [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_IGP_METRIC' | translate}}
+        </mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_link_label.show_te_metric"
+          (change)="metric('show_te_metric')" [disabled]="!currentTopo" color="primary">
+          {{'TOPO_SETTING_TE_METRIC' | translate}}
+        </mat-slide-toggle>
+        <mat-slide-toggle class="setting-content-container" [checked]="settingsObj.show_link_label.show_delay" (change)="delay()"
+          [disabled]="!currentTopo" color="primary">{{'TOPO_SETTING_DELAY' | translate}}</mat-slide-toggle>
+      </div>
+    </div>
+    <div class="setting-section refresh-setting setting-row" *ngIf="!simpleFlg">
+      <div class="setting-title">{{'TOPO_SETTING_REFRESH_RATE' | translate}}</div>
+      <div class="setting-row">
+        <mat-radio-group class="setting-content-container" [(ngModel)]="settingsObj.refresh_frequency">
+          <mat-radio-button [value]="10" color="primary" disableRipple>10s</mat-radio-button>
+          <mat-radio-button [value]="60" color="primary" disableRipple>1min</mat-radio-button>
+          <mat-radio-button [value]="300" color="primary" disableRipple>5min</mat-radio-button>
+          <mat-radio-button [value]="0" color="primary" disableRipple>{{'TOPO_SETTING_STOP_REFRESH' | translate}}</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+    <div class="setting-section font-setting setting-row" *ngIf="!simpleFlg">
+      <div class="setting-title">{{'TOPO_SETTING_FONT_SIZE_SETTING' | translate}}</div>
+      <div class="setting-content-container font-slider-container">
+        <span class="slider-label">{{fontRange.min}}px</span>
+        <ion-range-slider #fontSliderEl [class]="fontRange.class" type="single" [min]="fontRange.min"
+          [max]="fontRange.max" [from]="fontRange.from" step="1" prefix="" postfix=" px" decorate_both="false"
+          hide_min_max="true" (onFinish)="onfontsizeSliderFinish($event)"></ion-range-slider>
+
+        <span class="slider-label">{{fontRange.max}}px</span>
+      </div>
+    </div>
+    <div class="setting-section load-setting setting-row" *ngIf="!simpleFlg">
+      <div class="setting-title">{{'TOPO_SETTING_LOAD_SETTING' | translate}}</div>
+      <div class="setting-content-container load-slider-container">
+        <span class="slider-label">0%</span>
+        <ion-range-slider #loadSliderEl [class]="loadRange.class" type="double" min="0" max="100"
+          [from]="loadRange.from" [from_min]="loadRange.from_min" [from_max]="loadRange.from_max" from_shadow="false"
+          [to]="loadRange.to" [to_min]="loadRange.to_min" [to_max]="loadRange.to_max" to_shadow="false" prefix=""
+          postfix="%" decorate_both="false" hide_min_max="true" (onStart)="onLoadSliderStart($event)"
+          (onChange)="onLoadSliderChange($event)" (onFinish)="onLoadSliderFinish($event)"></ion-range-slider>
+        <span class="slider-label">100%</span>
+      </div>
+
+    </div>
+
+    <div class="setting-section setting-row" *ngIf="!simpleFlg">
+      <div class="setting-title">{{'TOPO_SETTING_LINK_WIDTH_SETTING' | translate}}</div>
+      <div class="setting-content-container font-slider-container">
+        <span class="slider-label">{{linkWidthRange.min}}px</span>
+        <ion-range-slider #linkWidthSliderEl [class]="linkWidthRange.class" type="single" [min]="linkWidthRange.min"
+          [max]="linkWidthRange.max" [from]="linkWidthRange.from" step="1" prefix="" postfix="px" decorate_both="false"
+          hide_min_max="true" (onFinish)="onLinkWidthSliderFinish($event)"></ion-range-slider>
+        <span class="slider-label">{{linkWidthRange.max}}px</span>
+      </div>
+    </div>
+  </perfect-scrollbar>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button color="primary" (click)="saveSettings()">
+    {{'COMMON_USED_LABEL_BTN_SAVE'| translate}}
+  </button>
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button mat-dialog-close (click)="cancelSettings()">
+    {{'COMMON_USED_LABEL_BTN_CLOSE' | translate}}
+  </button>
+</mat-dialog-actions>

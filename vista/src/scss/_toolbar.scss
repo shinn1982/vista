@@ -1,0 +1,22 @@
+.main-container {
+  .toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+
+    .left-btns {
+      button.mat-raised-button:not(:last-child) {
+        margin-right: 5px;
+      }
+    }
+
+    .search {
+      margin: 5px;
+
+      .mat-form-field-flex {
+        align-items: flex-end !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+form {
+  .mat-form-field {
+    width: 100%;
+
+    &.width20 {
+      width: 20%;
+    }
+    &.width40 {
+      width: 40%;
+    }
+    &.width50 {
+      width: 50%;
+    }
+    &.width60 {
+      width: 60%;
+    }
+    &.pding-right {
+      padding-right: .5rem;
+    }
+  }
+
+  mat-form-field.ng-invalid.ng-touched {
+    animation: example;
+    animation-duration: 0.3s;
+    margin-bottom: 13px;
+  }
+  
+  @keyframes example {
+    from {margin-bottom: 0;}
+    to {margin-bottom: 13px;}
+  }
+
+  .radio-line {
+    display: flex;
+    label {
+      padding-right: 15px;
+    }
+  }
+}

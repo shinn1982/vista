@@ -1,0 +1,373 @@
+<div class="toobar-container">
+  <div class="toolbar-left-actions">
+    <button mat-icon-button tabindex="-1" class="return-btn" color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <div class="toolbar-right-actions">
+    <button mat-raised-button tabindex="-1" class="refresh-btn" color="primary" *ngIf="flags.showPathForm" (click)="save()"
+    [disabled]="!pathForm.valid">
+    保存
+  </button>
+  <button mat-raised-button tabindex="-1" class="refresh-btn" color="primary" *ngIf="flags.showAlgForm" (click)="commitAlg()">
+    提交
+  </button>
+  </div>
+</div>
+<perfect-scrollbar class="detail-scrollbar">
+  <div class="detail-container">
+    <div class="block-div algResult-section" [hidden]="!flags.showAlgResult">
+        <div class="block-title">算路结果</div>
+        <div class="block-content algResult-content">
+          <table class="info-table border">
+            <tr>
+              <th class="index-header">序号</th>
+              <th>算法类型</th>
+              <th>Segment List</th>
+              <th>操作</th>
+              <th class="apply-header">应用</th>
+            </tr>
+            <tr *ngFor="let alg of algResultList; let i=index">
+              <td>{{i+1}}</td>
+              <td>{{alg.algo_type=='0'? '最优路径':'非等价路径'}}</td>
+              <td>{{alg.segmentList}}</td>
+              <td class="operation-cell">
+                <div class="opertion-buttons">
+                  <div class="table-link-btn" (click)="showPathVis(alg.data.paths)">查看还原路径</div>
+                  <div class="table-link-btn" (click)="showAlgDetail(alg)">详情</div>
+                </div>
+              </td>  
+              <td class="apply-cell">
+                <input type="radio" name="applyAlg" [value]="i" (change)="applyAlg(i, alg)">
+              </td>
+            </tr>
+          </table>
+        </div>
+    </div>
+    <div class="block-div" [hidden]="!flags.showPathForm">
+      <div class="block-title">
+        Path {{actionType === 'edit' ? '编辑':'创建'}}
+      </div>
+      <div class="block-content edit-form-container">
+        <div class="basic-section">
+          <form [formGroup]="pathForm">
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="Name" formControlName="idCtrl" required>
+              <mat-error *ngIf="pathForm.hasError('required', 'idCtrl')">
+                {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Name'} }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <mat-select placeholder="Headend" required formControlName="headendCtrl" disableOptionCentering>
+                <mat-option *ngFor="let node of nodeList" [value]="node.id">{{ node.id}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="pathForm.hasError('required', 'headendCtrl')">
+                {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Headend'} }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <mat-select placeholder="Tailend" required formControlName="tailendCtrl" disableOptionCentering>
+                <mat-option *ngFor="let node of nodeList" [value]="node.id">{{ node.id}}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="pathForm.hasError('required', 'tailendCtrl')">
+                {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Tailend'} }}
+              </mat-error>
+            </mat-form-field>
+
+            <div class="form-field radio-div">
+              <label>类型</label>
+              <mat-radio-group formControlName="typeCtrl">
+                <mat-radio-button value="sr" color="primary">SR Path</mat-radio-button>
+                <mat-radio-button value="common" color="primary">Common Path</mat-radio-button>
+              </mat-radio-group>
+              <mat-error *ngIf="pathForm.hasError('required', 'typeCtrl')">
+                {{'COMMON_INPUT_REQUIRED' | translate:{name: '类型'} }}
+              </mat-error>
+            </div>
+            <div [hidden]="pathType=='common'">
+              <mat-form-field class="mat-form-field">
+                <input matInput placeholder="Color" formControlName="colorCtrl">
+                <!-- <mat-error *ngIf="pathForm.hasError('required', 'colorCtrl')">
+                  {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Color'} }}
+                </mat-error> -->
+              </mat-form-field>
+
+              <div class="segment-list-section">
+                <div class="segment-list-title">Segment List</div>
+                <div class="form-field radio-div">
+                  <label>创建方式</label>
+                  <mat-radio-group formControlName="generateTypeCtrl" required>
+                    <mat-radio-button value="manual" color="primary">手动添加</mat-radio-button>
+                    <mat-radio-button value="auto" color="primary">自动计算</mat-radio-button>
+                  </mat-radio-group>
+                  <mat-error *ngIf="pathForm.hasError('required', 'generateTypeCtrl')">
+                    {{'COMMON_INPUT_REQUIRED' | translate:{name: '创建方式'} }}
+                  </mat-error>
+                </div>
+              </div>
+              <div class="segment-list-manual-section segment-indent" *ngIf="generateType==='manual'">
+                <div formArrayName="segmentListArray">
+                  <div *ngFor="let segment of segmentListArray.controls; let j=index">
+                    <div [formGroupName]="j" class="segment-row">
+                      <!-- <mat-form-field class="sid-field">
+                        <mat-select placeholder="Type" required (selectionChange)="sidTypeChange($event)" disableOptionCentering>
+                          <mat-option [value]="'node'">Node</mat-option>
+                          <mat-option [value]="'link'">Link</mat-option>
+                        </mat-select>
+                      </mat-form-field> -->
+                      <mat-form-field class="sid-field">
+                        <input matInput required placeholder="SID" formControlName="sidCtrl">
+                        <mat-error *ngIf="segment.get('sidCtrl').hasError('required')">
+                          {{'COMMON_INPUT_REQUIRED' | translate:{name: 'SID'} }}
+                        </mat-error>
+                        <mat-error *ngIf="segment.get('sidCtrl').hasError('pattern')">
+                          {{'NODE_SID_PATTERN' | translate }}
+                        </mat-error>
+                      </mat-form-field>
+
+                      <!-- <mat-form-field class="ip-field">
+                        <input matInput required placeholder="IP" formControlName="ipCtrl">
+                        <mat-error *ngIf="segment.get('ipCtrl').hasError('required')">
+                          {{'COMMON_INPUT_REQUIRED' | translate:{name: 'IP'} }}
+                        </mat-error>
+                        <mat-error *ngIf="segment.get('ipCtrl').hasError('pattern')">
+                          {{'NODE_IP_PATTERN' | translate }}
+                        </mat-error>
+                      </mat-form-field> -->
+
+                      <div class="icon-field">
+                        <mat-icon class="sid-list-icon-btn noselect" color="primary" (click)="addSegment()">
+                          add_box
+                        </mat-icon>
+                        <mat-icon class="sid-list-icon-btn noselect" color="primary"
+                          *ngIf="j>0" (click)="removeSegment(j)">
+                          delete
+                        </mat-icon>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <button mat-raised-button color="primary" (click)="btnShowPathVisClick()">查看还原路径</button>
+                </div>
+                
+              </div>
+            </div>
+            <div [hidden]="pathType==='sr'&&generateType==='manual'" [ngClass]="{'segment-indent': pathType==='sr'&&generateType==='auto'}">
+              <mat-form-field class="mat-form-field">
+                <mat-select placeholder="Metric" required formControlName="metricCtrl" disableOptionCentering>
+                  <mat-option [value]="'igp'">IGP</mat-option>
+                  <mat-option [value]="'te'">TE</mat-option>
+                  <mat-option [value]="'delay'">Delay</mat-option>
+                </mat-select>
+                <mat-error *ngIf="pathForm.hasError('required', 'metricCtrl')">
+                  {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Metric'} }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field">
+                <input matInput placeholder="Bandwidth(Mbps)" formControlName="bandwidthCtrl">
+                <mat-error *ngIf="pathForm.hasError('pattern', 'bandwidthCtrl')">
+                  {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Bandwidth'} }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field">
+                <input matInput placeholder="Affinity" formControlName="affinityCtrl">
+                <mat-error *ngIf="pathForm.hasError('pattern', 'affinityCtrl')">
+                  {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Affinity'} }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field">
+                <input matInput placeholder="Mask" formControlName="maskCtrl">
+                <!-- <mat-error *ngIf="pathForm.hasError('required', 'maskCtrl')">
+                  {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Mask'} }}
+                </mat-error> -->
+              </mat-form-field>
+
+              <div style="display: flex;">
+                <div style="width: 80%;">
+                  <mat-form-field class="mat-form-field">
+                    <input matInput placeholder="Include" formControlName="includeCtrl">
+                  </mat-form-field>
+                </div>
+
+                <div style="width: 20%;">
+                  <button mat-icon-button color="primary" class="add" [disabled]="!canOpenSelection()" (click)="openSelectionDialog('include')">
+                    <mat-icon>add_box</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div style="display: flex;">
+                <div style="width: 80%;">
+                  <mat-form-field class="mat-form-field">
+                    <input matInput placeholder="Exclude" formControlName="excludeCtrl">
+                  </mat-form-field>
+                </div>
+
+                <div style="width: 20%;">
+                  <button mat-icon-button color="primary" class="add" [disabled]="!canOpenSelection()" (click)="openSelectionDialog('exclude')">
+                    <mat-icon>add_box</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-field radio-div">
+                <label>Disjoint</label>
+                <mat-radio-group formControlName="disjointCtrl" required>
+                  <mat-radio-button value="1" color="primary">True</mat-radio-button>
+                  <mat-radio-button value="0" color="primary">False</mat-radio-button>
+                </mat-radio-group>
+                <mat-error *ngIf="pathForm.hasError('required', 'disjointCtrl')">
+                  {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Disjoint'} }}
+                </mat-error>
+              </div>
+
+              <mat-form-field class="mat-form-field">
+                <mat-select placeholder="Class" required formControlName="classCtrl" disableOptionCentering>
+                  <mat-option [value]="'Default'">Default</mat-option>
+                  <mat-option [value]="'Gold'">Gold</mat-option>
+                  <mat-option [value]="'Silver'">Silver</mat-option>
+                </mat-select>
+                <mat-error *ngIf="pathForm.hasError('required', 'classCtrl')">
+                  {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Class'} }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="mat-form-field">
+                <mat-select placeholder="Priority" required formControlName="priorityCtrl" required disableOptionCentering>
+                  <mat-option [value]="'0'">0 (不优化)</mat-option>
+                  <mat-option [value]="'1'">1 (可优化)</mat-option>
+                  <!--<mat-option [value]="'2'">2</mat-option> -->
+                </mat-select>
+                <mat-error *ngIf="pathForm.hasError('required', 'priorityCtrl')">
+                  {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Priority'} }}
+                </mat-error>
+
+              </mat-form-field>
+            </div>
+          </form>
+          <div class="buttons-div" [hidden]="pathType==='sr'&&generateType==='manual'" [ngClass]="{'segment-indent': pathType==='sr'&&generateType==='auto'}">
+            <button mat-raised-button color="primary" (click)="reset()">重置</button>
+            <button mat-raised-button color="primary" (click)="btnCalClick()"
+              [disabled]="flags.showAlgResult">计算</button>
+          </div>
+
+        </div>
+
+    </div>
+  </div>
+
+    <div class="block-div" [hidden]="!flags.showAlgForm">
+        <div class="block-title">选择算法</div>
+        <div class="block-content">
+          <form [formGroup]="algListForm">
+            <div formArrayName="algFormArray">
+              <div *ngFor="let algrithm of algFormArray.controls; let i=index" class="per-alg-section">
+                <div [formGroupName]="i">
+                  <div class="alg-fieldset">
+                    <div class="legend">算法{{i+1}}</div>
+                    <div class="btn-remove-alg" *ngIf="i>0">
+                      <button mat-icon-button color="primary" (click)="removeAlg(i)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                    <!-- <div style="padding:2px 10px; border:rgb(170, 170, 170) dashed 1px; border-radius: 5px;">算法{{i+1}}</div> -->
+                    <mat-form-field>
+                      <mat-select placeholder="Algorithm" required formControlName="algCtrl" disableOptionCentering>
+                        <mat-option [value]="'0'">最优路径</mat-option>
+                        <mat-option [value]="'1'">非等价路径</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="algrithm.hasError('required', 'algCtrl')">
+                        {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Algorithm'} }}
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <mat-select placeholder="Sorter" required formControlName="sorterCtrl" disableOptionCentering>
+                        <mat-option [value]="'metric'">metric</mat-option>
+                        <mat-option [value]="'min_hop'">min_hop</mat-option>
+                        <mat-option [value]="'max_min_band'">max_min_band</mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="algrithm.hasError('required', 'sorterCtrl')">
+                        {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Sorter'} }}
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <input matInput placeholder="Top" formControlName="topCtrl">
+                      <mat-error *ngIf="algrithm.hasError('pattern', 'topCtrl')">
+                        {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Top'} }}
+                      </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field>
+                      <input matInput placeholder="Limit" formControlName="limitCtrl">
+                      <mat-error *ngIf="algrithm.hasError('pattern', 'limitCtrl')">
+                        {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Limit'} }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div class="btn-add-alg" (click)="addAlg();">
+            <span>+ 添加算法</span>
+          </div>
+        </div>
+    </div>
+
+    <div class="block-div" *ngIf="flags.showAlgDetail&&selectAlg">
+          <div class="block-title">
+            路径详情
+          </div>
+
+        <div class="block-content">
+          <table class="no-border info-table">
+            <tr class="odd">
+              <th class="table-head-cell">算法类型</th>
+              <td class="table-info-cell">最优路径算法</td>
+            </tr>
+            <tr>
+              <th class="table-head-cell">SID</th>
+              <td>{{selectAlg.segmentList}}</td>
+            </tr>
+            <tr class="odd">
+              <th class="table-head-cell">Paths</th>
+              <td> 
+                <div *ngFor="let path of selectAlg.data.paths">
+                  <div class="each-path-cell">[ {{path}} ]</div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th class="table-head-cell">IGP</th>
+              <td>{{selectAlg.data.attr.igp}}</td>
+            </tr>
+            <tr class="odd">
+              <th class="table-head-cell">TE</th>
+              <td>{{selectAlg.data.attr.te}}</td>
+            </tr>
+            <tr>
+              <th class="table-head-cell">Delay</th>
+              <td>{{selectAlg.data.attr.delay}}</td>
+            </tr>
+            <tr class="odd">
+              <th class="table-head-cell">Min Hop</th>
+              <td>{{selectAlg.data.attr.min_hop}}</td>
+            </tr>
+            <tr class="">
+              <th class="table-head-cell">Max Min Band</th>
+              <td>{{selectAlg.data.attr.max_min_band}}</td>
+            </tr>
+          </table>
+        </div>
+    </div>
+  </div>
+</perfect-scrollbar>

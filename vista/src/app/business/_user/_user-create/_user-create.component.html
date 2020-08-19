@@ -1,0 +1,122 @@
+<div class="subpage-container">
+
+  <div class="bread-crumb">
+    <ul>
+      <li *ngFor="let perCrumb of breadCrumbData" [ngClass]="{'disabled':perCrumb.disabled }"
+        (click)="backToMainPage(perCrumb)">
+        {{perCrumb.label}}</li>
+    </ul>
+  </div>
+  <div class="subpage-content narrow">
+    <div class="block-panel">
+      <div class="panel-header">
+        {{'USER_CREATE_HEADER' | translate}}
+      </div>
+      <div class="panel-body">
+        <form [formGroup]="form">
+          <div class="content">
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'USER_TABLE_HEADER_USERNAME' | translate}}" formControlName="usernameCtrl"
+                required>
+              <mat-error *ngIf="form.hasError('pattern', 'usernameCtrl')">
+                {{'USER_CREATE_NAME_PATTERN' | translate}}
+              </mat-error>
+              <mat-error *ngIf="form.hasError('required', 'usernameCtrl')">
+                {{'USER_CREATE_NAME_REQUIRED' | translate}}
+              </mat-error>
+              <mat-error *ngIf="form.hasError('nameRepeat', 'usernameCtrl')">
+                {{'USER_CREATE_NAME_NAMEREPEAT' |translate}}</mat-error>
+              <mat-spinner [strokeWidth]="1" [diameter]="20" style="float: right;margin-top: -20px;"
+                *ngIf="flgs.usernameLoading">
+              </mat-spinner>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'USER_TABLE_HEADER_ALIAS' | translate}}" formControlName="aliasCtrl">
+              <mat-error *ngIf="form.hasError('maxlength', 'aliasCtrl')">
+                {{'USER_CREATE_ALIAS_PATTERN' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <ng-container formGroupName="passwordInfo" [ngSwitch]="flgs.editFlag">
+              <ng-container *ngSwitchCase="false">
+                <mat-form-field class="mat-form-field">
+                  <input matInput type="password" placeholder="{{'USER_CREATE_PASSWORD_LABEL' | translate}}"
+                    formControlName="passwordCtrl" required>
+                  <mat-error *ngIf="form.hasError('pattern', 'passwordInfo.passwordCtrl')">
+                    {{'USER_CREATE_PASSWORD_PATTERN' | translate}}
+                  </mat-error>
+                  <mat-error *ngIf="form.hasError('required', 'passwordInfo.passwordCtrl')">
+                    {{'USER_CREATE_PASSWORD_REQUIRED' | translate}}
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field">
+                  <input matInput type="password" placeholder="{{'USER_CREATE_REPASSWORD_LABEL' | translate}}"
+                    formControlName="rePasswordCtrl" required>
+                  <mat-error *ngIf="!flgs.pwdMatch">{{'USER_CREATE_REPASSWORD_MATCH' | translate}}</mat-error>
+                  <mat-error *ngIf="flgs.repwdRequired">{{'USER_CREATE_REPASSWORD_REQUIRED' | translate}}</mat-error>
+                </mat-form-field>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="true">
+                <mat-form-field class="mat-form-field">
+                  <input matInput type="password" placeholder="{{'USER_CREATE_PASSWORD_LABEL' | translate}}"
+                    formControlName="passwordCtrl">
+                  <mat-error *ngIf="form.hasError('pattern', 'passwordInfo.passwordCtrl')">
+                    {{'USER_CREATE_PASSWORD_PATTERN' | translate}}
+                  </mat-error>
+                  <mat-error *ngIf="form.hasError('required', 'passwordInfo.passwordCtrl')">
+                    {{'USER_CREATE_PASSWORD_REQUIRED' | translate}}
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field class="mat-form-field">
+                  <input matInput type="password" placeholder="{{repwdPlaceHolder}}" formControlName="rePasswordCtrl">
+                  <mat-error *ngIf="!flgs.pwdMatch">{{'USER_CREATE_REPASSWORD_MATCH' | translate}}</mat-error>
+                  <mat-error *ngIf="flgs.repwdRequired">{{'USER_CREATE_REPASSWORD_REQUIRED' | translate}}</mat-error>
+                </mat-form-field>
+              </ng-container>
+            </ng-container>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'USER_TABLE_HEADER_PHONE_NUMBER' | translate}}"
+                formControlName="phoneNumberCtrl">
+              <mat-error *ngIf="form.hasError('pattern', 'phoneNumberCtrl')">
+                {{'USER_CREATE_PHONE_NUMBER_PATTERN' | translate}}
+              </mat-error>
+              <mat-error *ngIf="form.hasError('maxlength', 'phoneNumberCtrl')">
+                {{'COMMON_USED_LABEL_MAXLENGTH' | translate:{number:25} }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'USER_TABLE_HEADER_EMAIL' | translate}}" formControlName="emailCtrl">
+              <mat-error *ngIf="form.hasError('pattern', 'emailCtrl')">
+                {{'USER_CREATE_EMAIL_PATTERN' | translate}}
+              </mat-error>
+              <mat-error *ngIf="form.hasError('maxlength', 'emailCtrl')">
+                {{'COMMON_USED_LABEL_MAXLENGTH' | translate:{number:45} }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="mat-form-field">
+              <input matInput placeholder="{{'USER_DETAIL_DES' | translate}}" formControlName="descriptionCtrl">
+              <mat-error *ngIf="form.hasError('maxlength', 'descriptionCtrl')">
+                {{'COMMON_USED_LABEL_MAXLENGTH' | translate:{number:255} }}
+              </mat-error>
+            </mat-form-field>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="btn-div">
+      <button mat-raised-button class="mat-elevation-z0" color="primary"
+        [disabled]="!form.valid || flgs.usernameLoading" (click)="save()">{{'COMMON_USED_LABEL_BTN_SAVE' | translate}}
+      </button>
+      <button mat-stroked-button (click)="backToMainPage()">{{'COMMON_USED_LABEL_BTN_CANCEL' | translate}}</button>
+    </div>
+  </div>
+
+</div>

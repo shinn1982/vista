@@ -1,0 +1,49 @@
+@import '~@angular/material/theming';
+@import './theme/mat-slider-theme.scss';
+/*mat-typography-level (font-size, line-height, font-weight) */
+$custom-typography: mat-typography-config($font-family: 'Roboto,  "Microsoft YaHei", "微软雅黑"',
+  $headline: mat-typography-level(16px, 50px, 500),
+  $display-2: mat-typography-level(14px, 40px, 500),
+  $body-1: mat-typography-level(13px, 35px, 500),
+
+);
+
+@include mat-core($custom-typography);
+
+$custom-primary: (50: #e8f3ff,
+  100 : #c7e2fe,
+  500 : #29b2fc,
+  600 : #26a9f0,
+  900 : #1a73e8,
+  A400: #3c464d,
+  contrast: (50 : #000000,
+    100 : #000000,
+    200: #3c464d,
+    500 : #ffffff,
+    600 : #ffffff,
+    900 : #ffffff));
+
+$primary: mat-palette($custom-primary, $default: 600, $lighter: 500, $darker: 900);
+$accent: mat-palette($mat-blue-gray, 800);
+$warn: mat-palette($mat-amber, 600);
+$theme: mat-light-theme($primary, $accent, $warn);
+@include angular-material-theme($theme);
+@include slider-custom();
+.mat-snack-bar-container {
+  min-height: 10px !important;
+  // margin: 0;
+  padding: 0 !important;
+  color: $dark-primary-text;
+  background: none;
+  box-shadow: none;
+}
+
+// .mat-snack-bar-container
+
+$process-bar-primary: mat-palette($mat-green, 600);
+$process-bar-accent: mat-palette($mat-amber, 600);
+$process-bar-warn: mat-palette($mat-red, 600);
+$process-bar-theme: mat-light-theme($process-bar-primary, $process-bar-accent, $process-bar-warn);
+.special-process-bar-theme {
+  @include mat-progress-bar-theme($process-bar-theme);
+}

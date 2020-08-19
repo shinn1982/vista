@@ -1,0 +1,8 @@
+<div class="message" [ngClass]="data.status? 'success': 'warn'" *ngIf="showMessage && data.msgs.length>0">
+  <mat-icon class="close" *ngIf="!data.status" (click)="close()">clear</mat-icon>
+  <div class="status" *ngFor="let msg of data.msgs">
+    <mat-icon *ngIf="data.status" color="primary">check_circle</mat-icon>
+    <mat-icon *ngIf="!data.status" color="warn">error</mat-icon>
+    <span class="content">{{msg}}</span>
+  </div>
+</div>

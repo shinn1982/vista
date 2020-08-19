@@ -1,0 +1,110 @@
+<div class="main" [hidden]="flgs.showNoTopo">
+  <!-- <app-topo-path [spaceId]="spaceId" [userId]="userId" *ngIf="summary.length !== 0"></app-topo-path> -->
+  <div class="topo-main" [class.noLeftPadding]="!flgs.showSidebar" [class.paddingLeft]="flgs.showSidebar">
+    <app-topo-sidebar id="sidebar" [class.hide]="!flgs.showSidebar" [topoData]="topoData">
+    </app-topo-sidebar>
+    <div class="right-main">
+      <div class="topo">
+
+        <!-- toobar -->
+        <!-- <div class="toolbar-old">
+          <mat-icon class="vertical-flip" color="primary" matTooltip="{{'TOPO_SETTING_BAR_SHOW_SETTINGS' | translate}}"
+            (click)="openSettings()">settings
+          </mat-icon>
+          <mat-icon class="rotate" color="primary" matTooltip="{{'TOPO_SETTING_BAR_AUTO_LAYOUT' | translate}}"
+            (click)="autoLayout('display')">zoom_out_map</mat-icon>
+          <mat-icon color="primary" matTooltip="{{'TOPO_SETTING_BAR_SAVE_VIEW'| translate}}" (click)="save(false)">save
+          </mat-icon>
+
+          <mat-icon color="primary" matTooltip="{{'TOPO_SETTING_BAR_SET_AS_SPACE_DEFAULT_VIEW' | translate}}"
+            (click)="save(true)" *ngIf="flgs.isSpaceOwner">image</mat-icon>
+          <button class="toolbar-button" mat-icon-button color="primary" [disabled]="flgs.refreshingTopo" disableRipple
+            matTooltip="{{'TOPO_SETTING_BAR_REFRESH' | translate}}" (click)="refreshClicked()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+
+          <div cdkDropList style="display: inline;" (cdkDropListDropped)="addNode($event)">
+            <button class="toolbar-button" mat-icon-button color="primary" disableRipple matTooltip="点击或拖拽以创建节点"
+              (click)="addNode()" cdkDrag>
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </div>
+        </div> -->
+
+        <div class="toolbar">
+          <div class="btn setting" matRipple [matRippleCentered]="true"
+            matTooltip="{{'TOPO_SETTING_BAR_SHOW_SETTINGS' | translate}}" matTooltipPosition="right"
+            (click)="openSettings()"></div>
+          <div class="btn auto-layout" matRipple [matRippleCentered]="true"
+            matTooltip="{{'TOPO_SETTING_BAR_AUTO_LAYOUT' | translate}}" matTooltipPosition="right"
+            (click)="autoLayout('display')"></div>
+          <div class="btn save" matRipple [matRippleCentered]="true"
+            matTooltip="{{'TOPO_SETTING_BAR_SAVE_VIEW'| translate}}" matTooltipPosition="right" (click)="save(false)">
+          </div>
+          <!-- <div class="btn default-layout" matRipple [matRippleCentered]="true"
+            matTooltip="{{'TOPO_SETTING_BAR_SET_AS_SPACE_DEFAULT_VIEW' | translate}}" matTooltipPosition="right"
+            (click)="save(true)"></div> -->
+          <div class="btn refresh" matRipple [matRippleCentered]="true"
+            matTooltip="{{'TOPO_SETTING_BAR_REFRESH' | translate}}" matTooltipPosition="right" (click)="refresh()"></div>
+          <div cdkDropList (cdkDropListDropped)="addNode($event)">
+            <div class="btn add-node" matRipple [matRippleCentered]="true" matTooltip="点击或拖拽以创建节点"
+              matTooltipPosition="right" (click)="addNode()" cdkDrag></div>
+          </div>
+          <div class="btn add-link" matRipple [matRippleCentered]="true" matTooltip="创建链路"
+            matTooltipPosition="right" (click)="toggleAddLink()"></div>
+        </div>
+        <!-- /.toolbar -->
+
+        <div *ngIf="flgs.addLinkFlg" class="tips-container noselect">
+          <div>依次点击两个节点以创建链路</div>
+          <div>再次点击创建按钮取消创建</div>
+          <div *ngIf="selectedNode.length>0">当前已选: {{selectedNode}}</div>
+        </div>
+
+        <div class="count-div">
+          <span>{{'TOPO_SETTING_BAR_LINK_COUNT' | translate}} {{eleCounts.linkCount}} </span>
+          <span>{{'TOPO_SETTING_BAR_NODE_COUNT' | translate}} {{eleCounts.nodeCount}} </span>
+        </div>
+
+        <div id="network" style="height: 100%;" (mousedown)="handleNetworkEvents('down')"
+          (mouseup)="handleNetworkEvents('up')" (mousemove)="handleNetworkEvents('move')"
+          (wheel)="handleNetworkEvents('wheel')"></div>
+        <canvas id="path-container" width="1920" height="1080"
+          style="position: absolute; right: 0; left: 0; top: 0; bottom: 0; display: none; pointer-events: none;"></canvas>
+
+      </div>
+
+    </div>
+
+    <ng-container *ngIf="flgs.showTopo">
+      <app-policy-path-control-panel *ngIf="flgs.showPathCtrlPanel" [pathList]="currentPathList">
+      </app-policy-path-control-panel>
+
+      <!-- 右侧面板 -->
+      <app-right-drawer [class.show]="flgs.showPolicyTables" [class.noselect]="grabber"
+        [style.width.px]='rightDrawerWidth' [detailFlag]="flgs.showDetail" [selectElements]="selectElements"
+        [filterValue]="filterValue" (closeTopoDetailEvent)="showTopoDetail(false)"></app-right-drawer>
+      <div class="grabber" *ngIf="flgs.showPolicyTables" [style.right.px]="rightDrawerWidth-3"
+        (mousedown)="onMouseDown($event)"></div>
+      <div class="common-toggle-btn policy-tables-toggle" [class.show]="flgs.showPolicyTables"
+        [style.right.px]="flgs.showPolicyTables?rightDrawerWidth-1: 0"
+        (click)="flgs.showPolicyTables = !flgs.showPolicyTables">
+      </div>
+    </ng-container>
+
+    <div class="common-toggle-btn tree-sidebar-toggle" (click)="toggleSidebar()" [class.hide]="!flgs.showSidebar">
+    </div>
+
+  </div>
+</div>
+<div class="main no-topo-overlay" *ngIf="flgs.showNoTopo">
+  <div>
+    <p class="img"></p>
+    <p class="bold">No Topology found.</p>
+    <p>{{'TOPO_NO_FOUNT_TOPO' | translate}}</p>
+    <p class="btn-redirect">
+      <button mat-raised-button class="mat-elevation-z0"
+        color="primary">{{'TOPO_ADD_BGPLS_SESSION' | translate}}</button>
+    </p>
+  </div>
+</div>

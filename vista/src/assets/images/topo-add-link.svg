@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="17.382" height="20.792" viewBox="0 0 17.382 20.792">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke: #b2babe;
+      }
+
+      .cls-2, .cls-3, .cls-6 {
+        fill: none;
+      }
+
+      .cls-2 {
+        stroke-width: 1.5px;
+      }
+
+      .cls-3 {
+        stroke-width: 2px;
+      }
+
+      .cls-4 {
+        fill: #b2babe;
+      }
+
+      .cls-5 {
+        stroke: none;
+      }
+    </style>
+  </defs>
+  <g id="组_672" data-name="组 672" transform="translate(-28.718 -282.208)">
+    <g id="组_592" data-name="组 592" transform="translate(-15.104 -155.104)">
+      <g id="椭圆_129" data-name="椭圆 129" class="cls-1" transform="translate(52.104 449.104)">
+        <circle class="cls-5" cx="4.5" cy="4.5" r="4.5"/>
+        <circle class="cls-6" cx="4.5" cy="4.5" r="4"/>
+      </g>
+      <g id="组_591" data-name="组 591" transform="translate(54.104 451.104)">
+        <line id="直线_391" data-name="直线 391" class="cls-2" x2="5" transform="translate(0 2.5)"/>
+        <line id="直线_392" data-name="直线 392" class="cls-2" y2="5" transform="translate(2.5)"/>
+      </g>
+    </g>
+    <g id="组_668" data-name="组 668" transform="translate(220.833 60.442) rotate(45)">
+      <line id="直线_423" data-name="直线 423" class="cls-3" y2="15.889" transform="translate(32.933 287.735)"/>
+      <path id="路径_824" data-name="路径 824" class="cls-4" d="M5523.333,6129.333l4.848-6,5.152,6Z" transform="translate(-5495.076 -5837.966)"/>
+    </g>
+  </g>
+</svg>

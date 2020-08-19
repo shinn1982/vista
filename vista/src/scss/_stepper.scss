@@ -1,0 +1,52 @@
+@import './theme.scss';
+@import './variables/colors.scss';
+
+mat-step-header {
+  display: flex;
+  padding: 24px;
+
+}
+
+
+.mat-vertical-content {
+  padding: 0 200px 24px 24px;
+  width: 60%;
+
+  .mat-form-field {
+    width: 100%;
+    padding-bottom: 10px;
+  }
+
+  .mat-radio-label {
+    margin-right: 10px;
+    padding-bottom: 10px;
+  }
+
+  .left10Margin {
+    margin-left: 10px !important;
+  }
+}
+
+mat-vertical-stepper {
+  .btns {
+    padding-top: 20px;
+
+    button {
+      margin-left: 10px;
+      font-size: 14px;
+
+      &:first-child {
+        border: 1px solid $light-grey;
+        color: mat-color($primary);
+      }
+    }
+  }
+
+  .radio-line {
+    display: flex;
+
+    &>label {
+      padding-right: 15px;
+    }
+  }
+}

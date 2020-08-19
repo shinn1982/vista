@@ -1,0 +1,419 @@
+@import '../../../../scss/theme.scss';
+$normal-font-color: #2f3243;
+$normal-icon-bg :#fafafa;
+$border-color: #aaa;
+$focus-border-color: mat-color($primary);
+$option-color: rgb(221, 237, 254); //#c7e8ff;
+$select-sm-height: 25px;
+$select-height: 37px;
+$select-big-height: 42px;
+$select-sm-font: 10px;
+$select-nor-font: 13px;
+
+@mixin border-radius($radius) {
+  border-radius: $radius;
+}
+
+@mixin box-shadow($offsetX, $offsetY, $blur, $color) {
+  box-shadow: $offsetX $offsetY $blur $color;
+}
+
+@mixin border-top-left-radius($radius) {
+  border-top-left-radius: $radius;
+}
+
+@mixin border-bottom-left-radius($radius) {
+  border-bottom-left-radius: $radius;
+}
+
+@mixin border-top-right-radius($radius) {
+  border-top-right-radius: $radius;
+}
+
+@mixin border-bottom-right-radius($radius) {
+  border-bottom-right-radius: $radius;
+}
+
+@mixin select-input-common() {
+  .input-div {
+    padding: 0 !important;
+    height: 100%;
+
+    input {
+      @include border-radius(inherit);
+      padding-left: 10px;
+      width: 100%;
+      height: 100%;
+      display: inline-block;
+      border: none;
+      background: transparent;
+      min-height: 27px;
+    }
+
+    input:focus,
+    input:active {
+      outline: none;
+    }
+  }
+}
+
+@mixin select-resize-common($height, $font-size) {
+  .frame {
+    min-height: $height;
+    outline: none;
+
+    .input-div {
+      line-height: $height;
+      font-size: $font-size;
+
+      .icon-div {
+        min-height: $height;
+        line-height: $height;
+      }
+    }
+
+    .select-ul {
+      top: $height*1.06;
+      font-size: $font-size;
+    }
+  }
+}
+
+.fa-times::after {
+  content: '×';
+  color: $normal-font-color;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.fa-angle-down {
+  display: inline-block;
+  width: 80%;
+  height: 100%;
+  background: url('../../../../assets/images/select_filter.svg') no-repeat;
+  background-size: 100% 100%;
+  // margin-top: 8px;
+}
+
+.fa-angle-up {
+  display: inline-block;
+  width: 80%;
+  height: 100%;
+  background: url('../../../../assets/images/select_filter.svg') no-repeat;
+  background-size: 100% 100%;
+  // margin-top: 8px;
+}
+
+.disabled {
+  cursor: not-allowed;
+
+  .input-div {
+    background: #efefef;
+    cursor: not-allowed;
+  }
+
+  .icon-div {
+    background: #efefef !important;
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    -webkit-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    transform: scale(1, 1);
+  }
+
+  25% {
+    -webkit-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    transform: scale(1, 1);
+  }
+
+  50% {
+    -webkit-transform: scale(1, 1.1);
+    -ms-transform: scale(1, 1.1);
+    -moz-transform: scale(1, 1.1);
+    -o-transform: scale(1, 1.1);
+    transform: scale(1, 1.1);
+  }
+
+  75% {
+    -webkit-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    transform: scale(1, 1);
+  }
+
+  100% {
+    -webkit-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -moz-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    transform: scale(1, 1);
+  }
+}
+
+.open {
+  opacity: 1;
+  -webkit-animation: slide-down .5s ease-in;
+  -moz-animation: slide-down .5s ease-in;
+  -ms-animation: slide-down .5s ease-in;
+  -o-animation: slide-down .5s ease-in;
+  animation: slide-down .5s ease-in;
+  transition: opacity .3s ease-in;
+  -o-transition: opacity .3s ease-in;
+  -webkit-transition: opacity .3s ease-in;
+  -moz-transition: opacity .3s ease-in;
+  -ms-transition: opacity .3s ease-in;
+  transform-origin: 50% 0;
+  display: block;
+}
+
+.hide {
+  -webkit-transition: all 0.5s 0.1s;
+  -moz-transition: all 0.5s 0.1s;
+  -o-transition: all 0.5s 0.1s;
+  transition: all 0.5s 0.1s;
+  visibility: hidden;
+  opacity: 0;
+
+  li {
+    cursor: default;
+  }
+}
+
+.intput-select {
+  @include select-input-common();
+}
+
+.group-select-ul {
+  background: red;
+
+  li {
+    pointer-events: none;
+
+    .group-label {
+      opacity: 0.6;
+    }
+
+    &:focus,
+    &:active,
+    &:hover {
+      background: #fff !important;
+    }
+
+    ul {
+      padding: 0;
+
+      li {
+        padding-left: 30px;
+        cursor: pointer;
+        pointer-events: all;
+
+        &:focus,
+        &:active,
+        &:hover {
+          background: $option-color !important;
+        }
+      }
+    }
+  }
+}
+
+input::-ms-clear {
+  display: none;
+}
+
+.cpu-select {
+  position: relative;
+
+  .frame {
+
+    &:focus,
+    &:active {
+      border-bottom: solid 1px $border-color;
+      border-bottom: solid 2px $focus-border-color; // @include box-shadow(0, 0, 3px, #65bfff)
+    }
+
+    @include border-radius(0px);
+    border-bottom: solid 1px $border-color;
+    min-height: 37px;
+    font-size: $select-nor-font;
+    background: #fafafa;
+    outline: none;
+
+    .input-div {
+      @include border-radius(0px);
+
+      position: relative;
+      padding: 0 30px 0 10px;
+      width: 100%;
+      height: 100%;
+      line-height: 37px;
+      background: #fafafa;
+
+      span {
+        width: 100%;
+        height: 100%;
+        display: inline-block;
+      }
+
+      >span.span-block {
+        @include border-radius(3px);
+        height: 100%;
+        display: inline-block;
+        width: auto;
+        display: inline-block;
+        margin: 5px;
+        padding: 4px 8px;
+        background: #f0f0f0;
+        color: #8b8b8b;
+
+        i {
+          color: #7e7e7e;
+          cursor: pointer;
+        }
+      }
+
+      .icon-div {
+        @include border-top-right-radius(0px);
+        @include border-bottom-right-radius(0px);
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: inline-block;
+        height: 100%;
+        width: 16px;
+        background: #fafafa;
+        text-align: center;
+        min-height: 37px;
+        line-height: 37px;
+
+        i {
+          color: #2f3243;
+        }
+      }
+    }
+
+    .input-div-multi {
+      line-height: normal;
+      min-height: 37px;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .select-ul {
+      @include border-radius(3px);
+      @include border-top-left-radius(0);
+      @include border-top-right-radius(0);
+      list-style: none;
+      padding-left: 0; // border: solid 1px $border-color;
+      box-shadow: 0 0 3px #efefef;
+      border-top: none;
+      position: absolute;
+      top: 100%;
+      width: 100%;
+      background: #fff;
+      z-index: 999;
+
+      li {
+        z-index: inherit;
+        display: block;
+        min-height: 32px;
+        padding: 0 10px;
+        line-height: 32px;
+        cursor: pointer;
+
+        &:focus,
+        &:active,
+        &:hover {
+          background: $option-color;
+        }
+      }
+
+      li:first-child {
+        margin-top: 5px;
+      }
+
+      li.checked {
+        background: $option-color;
+      }
+
+      li.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      li.group-normal {
+        padding-left: 30px;
+      }
+
+      >li.filter_li {
+        min-height: 32px !important;
+        margin: 10px 0;
+        position: relative;
+
+        &:focus,
+        &:active,
+        &:hover {
+          background: #fff;
+        }
+
+        input {
+          padding-left: 10px;
+          width: 100%;
+          height: 100%;
+          border: solid 1px $focus-border-color;
+          border-top-style: solid;
+          border-left-style: solid;
+          border-right-style: solid;
+          @include border-radius(2px);
+          outline: none;
+          min-height: 32px;
+        }
+
+        i {
+          position: absolute;
+          top: 30%;
+          right: 20px;
+          color: $focus-border-color;
+        }
+      }
+    }
+
+    .open {
+      opacity: 1;
+      -webkit-animation: slide-down .5s ease-in;
+      -moz-animation: slide-down .5s ease-in;
+      -ms-animation: slide-down .5s ease-in;
+      -o-animation: slide-down .5s ease-in;
+      animation: slide-down .5s ease-in;
+      transition: opacity .3s ease-in;
+      -o-transition: opacity .3s ease-in;
+      -webkit-transition: opacity .3s ease-in;
+      -moz-transition: opacity .3s ease-in;
+      -ms-transition: opacity .3s ease-in;
+      transform-origin: 50% 0;
+      display: block;
+    }
+
+    .hide {
+      -webkit-transition: all 0.5s 0.1s;
+      -moz-transition: all 0.5s 0.1s;
+      -o-transition: all 0.5s 0.1s;
+      transition: all 0.5s 0.1s;
+      visibility: hidden;
+      opacity: 0;
+
+      li {
+        cursor: default;
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<perfect-scrollbar class="content" [config]="config">
+  <app-header></app-header>
+
+  <div class="alert-container" *ngIf="licenseMsgText">
+    <div class="alert-text">{{licenseMsgText}}</div>
+  </div>
+
+  <div class="main-container" [class.hasLicenseMsg]="licenseMsgText">
+    <div class="loader" *ngIf="loadingFlg">
+      <mat-spinner></mat-spinner>
+    </div>
+    <!-- <router-outlet></router-outlet> -->
+    <router-outlet></router-outlet>
+
+  </div>
+</perfect-scrollbar>
+<app-footer></app-footer>

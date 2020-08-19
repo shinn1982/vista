@@ -1,0 +1,120 @@
+<div class="subpage-container detail-container">
+
+  <div class="bread-crumb">
+    <ul>
+      <li *ngFor="let perCrumb of breadCrumbData" [ngClass]="{'disabled':perCrumb.disabled }"
+        (click)="backToMainPage(perCrumb)">
+        {{perCrumb.label | translate}}</li>
+    </ul>
+  </div>
+
+  <div class="subpage-content">
+    <div class="block-panel">
+      <div class="panel-header">
+        {{'COMMON_USED_LABEL_STEP_BASIC_INFO' | translate}}
+      </div>
+      <div class="panel-body detail-content">
+        <div class="basic-display">
+          <div class="row">
+            <span class="label">{{'SPACE_TABLE_HEADER_NAME' | translate}}</span>
+            <span class="label-value">{{spaceDetail.space_name}}</span>
+            <span class="label">{{'COMMON_USED_LABEL_CREATED_ON' | translate}}</span>
+            <span class="label-value">{{spaceDetail.created_on | formatTime}}</span>
+          </div>
+          <div class="row">
+            <span class="label">{{'SPACE_TABLE_HEADER_COMMUNITY' | translate}}</span>
+            <span class="label-value">{{spaceDetail.snmp_community}}</span>
+            <span class="label">{{'COMMON_USED_LABEL_UPDATE_ON' | translate}}</span>
+            <span class="label-value">{{spaceDetail.updated_on | formatTime}}</span>
+          </div>
+          <div class="row">
+            <span class="label">{{'SPACE_DETAIL_DES' | translate}}</span>
+            <span class="label-value">{{spaceDetail.description}}</span>
+            <span class="label">{{'SPACE_DETAIL_FILTER' | translate}}</span>
+            <span class="label-value">{{spaceDetail.filter}}</span>
+          </div>
+          <div class="row">
+            <span class="label">{{'SPACE_CREATE_NODE_NAME_REG_LIST_LABEL' | translate}}</span>
+            <span class="label-value name-reg-label">
+              <div *ngFor="let reg of spaceDetail.node_name_regex_list">
+                <span class="name-reg-priority blue">({{reg.priority}})</span>
+                <span class="blue">{{ '\{\{' }}</span><span class="name-reg-value">{{reg.regex}}</span><span
+                  class="blue">{{ '\}\}' }}</span>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="block-panel">
+      <div class="panel-header">
+        BGP Sessions ( {{sessionDetail.length}} )
+      </div>
+      <div class="panel-body detail-content">
+        <table cellspacing="0" cellpadding="0" class="horizontal-table">
+          <thead>
+            <tr>
+              <td>{{'SPACE_DETAIL_BGP_NAME' | translate}}</td>
+              <td>{{'SPACE_DETAIL_BGP_LOCAL_ADDR' | translate}}</td>
+              <td>{{'SPACE_DETAIL_BGP_REMOTE_ADDR' | translate}}</td>
+              <td>{{'SESSION_PROGRESS_STATUS' | translate}}</td>
+              <td>{{'SPACE_DETAIL_BGP_FSM' | translate}}</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let session of sessionDetail; let i = index" [ngClass]="{'odd':i%2==1}">
+              <td>{{session.name}}</td>
+              <td>{{session.local_addr}}</td>
+              <td>{{session.remote_addr}}</td>
+              <td [class.status-active]="session.container_status === 'running'"
+                [class.status-warning]="session.container_status !== 'running'">
+                {{session.container_status | formatContainerStatus}}</td>
+              <td [class.status-active]="session.fsm === 'ESTABLISHED'"
+                [class.status-warning]="session.fsm !== 'ESTABLISHED'">
+                {{session.fsm | formatFsm}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="block-panel">
+      <div class="panel-header">
+        {{'SPACE_DETAIL_DEVICE_LIST' | translate}} ( {{spaceDetail.space_devices.length}})
+      </div>
+      <div class="panel-body detail-content">
+        <table cellspacing="0" cellpadding="0" class="horizontal-table">
+          <thead>
+            <tr>
+              <td>IP（SNMP）</td>
+              <td>Hostname</td>
+              <td>{{'DEVICE_CHECK_RESULT' | translate:{'type': 'SNMP/Netconf'} }}</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let device of spaceDetail.space_devices; let i = index" [ngClass]="{'odd':i%2==1}">
+              <td>{{device.ip}}</td>
+              <td class="hostname-td">{{device.hostname}}</td>
+              <td>
+                <span [class.status-active]="device.snmp_checkresult === true"
+                  [class.status-error]="device.snmp_checkresult === false"
+                  [class.status-warning]="device.snmp_checkresult === 'checking'">
+                  {{device.snmp_checkresult | formatCheckResult | translate}}
+                </span>/
+                <span [class.status-active]="device.netconf_checkresult === true"
+                  [class.status-error]="device.netconf_checkresult === false"
+                  [class.status-warning]="device.netconf_checkresult === 'checking'">
+                  {{device.netconf_checkresult | formatCheckResult | translate}}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="btn-div">
+      <button mat-stroked-button (click)="backToMainPage()">{{'COMMON_USED_LABEL_BTN_BACK' | translate}}</button>
+    </div>
+  </div>
+
+</div>

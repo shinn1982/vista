@@ -1,0 +1,90 @@
+$main-color: #439efc;
+// $main-color: #79b6e3;
+$shadow: #f9f9f9;
+$border-color: #e1e5ea;
+$normal-node: #87c2ff;
+$pn-node: #ced1d4;
+$tab-color: #9098a1;
+/*common*/
+
+$common-font-size: 14px;
+$nav-font-size: 16px;
+$nav-background-color: #1a73e8;
+/*main background */
+
+$main-container-top: 40px;
+$main-container-right: 24px;
+$main-container-bottom: 30px;
+$main-container-left: 24px;
+$main-bg-color: #f5f5f5;
+$container-bg: #ffffff;
+// $main-layout-top: 60px;
+$main-layout-left: 0;
+$main-layout-right: 0;
+$main-layout-bottom: 32px;
+/*content-conainer*/
+
+$content-container-bg: #ffffff;
+$content-contaner-shdow: 0 0 1px #e1e5ea;
+$row-odd: #f4f9ff;
+$active-row: #d4e9ff;
+/*table*/
+
+$thead-bordder-color: #d4e9ff;
+$thead-font-color: #3c464d;
+/*icon*/
+
+$icon-border-color: #dfe3e6;
+/*subpage*/
+
+$subpage-container-top: 60px;
+$subpage-padding: 10vw;
+// $subpage-crumb-normal-color: $blueA200;
+$subpage-crumb-normal-color:#3c464d;
+$subpage-crumb-disabled-color: rgba(0, 0, 0, 0.54);
+$subpage-crumb-arrow: #aeb0b9;
+$subpage-font-size: 14px;
+$vertical-step-width: 120px;
+$vertical-step-active-color:#8c8c8c;
+
+$block-shadow: 0 2px 2px rgba(0, 0, 0, 0.24),
+0 0 2px rgba(0, 0, 0, 0.12);
+$block-border: 1px solid rgba(0, 0, 0, 0.03);
+$block-header-bg: rgba(0, 0, 0, 0.03);
+$block-header-height: 40px;
+$block-font-color: rgba(0, 0, 0, 0.54);
+/*topo*/
+
+// $basic-link-color:#DFE5EB;
+// $basic-link-color:#dbf4db;
+$basic-link-color: #dceedc;
+$red: #ee2e33;
+$green: #1cb954;
+$yellow: #fdaf43;
+$disabled: #c0c7ce;
+
+/*topo segment colors */
+$topo-sel-color: #439efc;
+// $selectStrokeColor: #787a7c;
+// $selectStrokeColor: #acb1b6;
+// $topo-select-link-color: #acb1b6;
+$topo-select-link-color: #c9edc9;
+$selectStrokeColor: #c9edc9;
+/*detail*/
+
+$detail-font-color: #3c464d;
+$detail-table-gray: #f6f7f8;
+$detail-table-header: #eceff2;
+$horizontal-td-padding:5px 30px;
+/*check-status*/
+
+$active-status-color:#439efc;
+$warnint-status-color: #fdca75;
+$no-pass-color: #ee2e33;
+$none-grey: #9098a1;
+
+/*input*/
+
+$common-input-grey: rgba(0, 0, 0, 0.42);
+$active-input-blue: #439efc;
+$common-span-grey: rgba(0, 0, 0, 0.42);

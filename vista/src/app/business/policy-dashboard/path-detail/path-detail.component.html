@@ -1,0 +1,105 @@
+<div class="toobar-container">
+  <div class="toolbar-left-actions">
+    <button mat-icon-button class="return-btn" color="primary" (click)="return()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <div class="toolbar-right-actions">
+    <button mat-icon-button class="refresh-btn" color="primary" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+</div>
+<perfect-scrollbar class="detail-scrollbar">
+  <div class="detail-container">
+    <div class="block-div">
+      <div class="block-title bordered">Path详情</div>
+
+      <div class="block-content bordered">
+        <table class="no-border info-table">
+          <tr class="odd">
+            <th>Name</th>
+            <td>{{pathInfo.id}}</td>
+          </tr>
+          <tr>
+            <th>类型</th>
+            <td>{{pathInfo.path_type_frm}} Path</td>
+          </tr>
+          <tr class="odd">
+            <th>Headend</th>
+            <td>{{pathInfo.headend}}</td>
+          </tr>
+          <tr>
+            <th>Tailend</th>
+            <td>{{pathInfo.tailend}}</td>
+          </tr>
+          <tr class="odd">
+            <th>Color</th>
+            <td>{{pathInfo.color}}</td>
+          </tr>
+          <tr>
+            <th>Metric</th>
+            <td>{{pathInfo.metric | uppercase}}</td>
+          </tr>
+          <tr class="odd">
+            <th>Bandwidth(Mbps)</th>
+            <td>{{pathInfo.bandwidth}}</td>
+          </tr>
+          <tr>
+            <th>Affinity</th>
+            <td>{{pathInfo.affinity}}</td>
+          </tr>
+          <tr class="odd">
+            <th>Mask</th>
+            <td>{{pathInfo.mask}}</td>
+          </tr>
+          <tr>
+            <th>Disjoint</th>
+            <td>{{pathInfo.disjoint}}</td>
+          </tr>
+          <tr class="odd">
+            <th>Class</th>
+            <td>{{pathInfo.class}}</td>
+          </tr>
+          <tr>
+            <th>Priority</th>
+            <td>{{pathInfo.priority}}</td>
+          </tr>
+          <tr class="odd">
+            <th>算法类型</th>
+            <td>{{pathInfo.algorithm.algo==0? '最优路径' : '非等价路径'}}</td>
+            <!-- SPF就是最短，最优路径的意思; SPF应该是最优路径，Non SPF是非等价路径  -->
+          </tr>
+          <tr>
+            <th>Segment List</th>
+            <td>{{pathInfo.segment_list}}</td>
+          </tr>
+          <tr class="odd">
+            <th>Paths</th>
+            <td> 
+              <div *ngFor="let path of pathInfo.path">
+                <div class="each-path-cell">[ {{path}} ]</div>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <!-- <div class="detail-table-title">
+          Segment List
+        </div>
+        <table class="basic-info no-border segment-table">
+          <tr class="bg-header-row">
+            <th class="sid-header">SID</th>
+            <th class="ip-header">IP</th>
+            <th class="type-header">SID类型</th>
+          </tr>
+          <tr>
+            <td>17001</td>
+            <td></td>
+            <td><span class="sid-type">Node</span></td>
+          </tr>
+        </table> -->
+      </div>
+
+    </div>
+  </div>
+</perfect-scrollbar>

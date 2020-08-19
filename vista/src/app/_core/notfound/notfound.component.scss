@@ -1,0 +1,46 @@
+@import '../../../scss/variables/image-path.scss';
+
+* {
+
+  padding: 0;
+  margin: 0;
+}
+.main-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 250px;
+
+  .pic {
+    background: url($page404) no-repeat;
+    height: 294px;
+    width: 90%;
+    background-position: center;
+  }
+
+  .text {
+    p {
+      line-height: 2.8em;
+
+      &.bold {
+        color: #3C464D;
+        font-weight: 600;
+        // font-size: 1.2vw;
+        font-size: 14px;
+      }
+
+      &.light {
+        // font-size: 1vw;
+        font-size: 13px;
+        color: #9098A1;
+      }
+    }
+  }
+
+  .action {
+    margin-top: 3vh;
+  }
+}

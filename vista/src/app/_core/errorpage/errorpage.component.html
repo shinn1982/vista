@@ -1,0 +1,15 @@
+<div class="main-container">
+  <div class="pic">
+    <!-- <img src="../../assets/images/500.png" alt="server error"> -->
+  </div>
+  <div class="text">
+    <p class="bold">{{statusText + ':'}} {{ statusCode }} </p>
+    <p class="light">
+      {{statusText | translate}}
+    </p>
+  </div>
+  <div class="action">
+    <button mat-raised-button class="mat-elevation-z0" color="primary"
+      (click)="goBack()">{{'ERRORPAGE_ERROR_BTN' | translate}}</button>
+  </div>
+</div>

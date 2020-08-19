@@ -1,0 +1,62 @@
+<div mat-dialog-title>
+  {{title}}
+</div>
+<mat-dialog-content [style.max-height.px]="" [perfectScrollbar]="config">
+  <form class="search-form">
+    <mat-form-field>
+      <input type="text" matInput placeholder="{{'COMMON_USED_LABEL_SEARCH' | translate}}" [formControl]="filterCtrl">
+    </mat-form-field>
+  </form>
+  <div class="inner-content-wrapper">
+    <div class="block-left" [style.max-height.px]="" [perfectScrollbar]="config">
+      <div class="line-head">
+        <span class="selecte-box"></span>
+        <span class="ip"> ID</span>
+        <span class="type">{{'COMMON_USED_LABEL_TYPE' | translate}}</span>
+      </div>
+      <div class="line" *ngFor="let perOption of unselectedEles" [hidden]="!perOption.show">
+        <span class="selecte-box">
+          <mat-checkbox class="example-margin" [(ngModel)]="perOption.checked" color="primary"
+            (change)="$event ? selection.toggle(perOption) : null"></mat-checkbox>
+        </span>
+        <span class="ip"> {{perOption.id}}</span>
+        <span class="type"> {{perOption.type}}</span>
+      </div>
+    </div>
+    <div class="block-center">
+      <div class="pointer" (click)="select(true)">{{'COMMON_USED_LABEL_ADD' | translate}}</div>
+      <div class="pointer" (click)="select(false)">{{'COMMON_USED_LABEL_REMOVE' | translate}}</div>
+    </div>
+    <div class="block-right" [style.max-height.px]="" [perfectScrollbar]="config">
+      <div class="line-head">
+        <span class="selecte-box"></span>
+        <span class="ip"> ID</span>
+        <span class="type"> {{'COMMON_USED_LABEL_TYPE' | translate}}</span>
+        <span class="order"> </span>
+      </div>
+      <div class="line" *ngFor="let perOption of selectedEles; let i=index">
+        <span class="selecte-box">
+          <mat-checkbox class="example-margin" [(ngModel)]="perOption.checked" color="primary"
+            (change)="$event ? selection.toggle(perOption) : null"></mat-checkbox>
+        </span>
+        <span class="ip"> {{perOption.id}}</span>
+        <span class="type"> {{perOption.type}}</span>
+        <span class="order">
+          <i class="upward-icon" (click)="swapItem(i,i-1)"></i>
+          <i class="downward-icon" (click)="swapItem(i,i+1)"></i>
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button color="primary" (click)="saveSelected()">
+    {{'COMMON_USED_LABEL_BTN_SAVE'| translate}}
+  </button>
+  <button class="mat-elevation-z0" tabindex="-1" mat-raised-button mat-dialog-close (click)="cancel()">
+    {{'COMMON_USED_LABEL_BTN_CLOSE' | translate}}
+  </button>
+</mat-dialog-actions>
+

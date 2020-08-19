@@ -1,0 +1,297 @@
+<div class="toobar-container">
+  <div class="toolbar-left-actions">
+    <button mat-icon-button class="return-btn" color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </div>
+  <div class="toolbar-right-actions">
+    <button class="mat-elevation-z0 btn-delete" *ngIf="actionType==='view'" mat-raised-button (click)="delete()">
+      删除
+    </button>
+    <button class="mat-elevation-z0 btn-add" mat-raised-button color="primary" *ngIf="actionType==='view'"
+      (click)="edit()">
+      编辑
+    </button>
+    <button class="mat-elevation-z0 btn-cancel" mat-raised-button *ngIf="actionType==='edit'" (click)="cancel()">
+      {{'COMMON_USED_LABEL_BTN_CANCEL' | translate}}
+    </button>
+    <button class="mat-elevation-z0 btn-add" mat-raised-button color="primary" *ngIf="actionType==='edit'"
+      (click)="save()" [disabled]="!canSave()">
+      {{'COMMON_USED_LABEL_BTN_SAVE' | translate}}
+    </button>
+  </div>
+</div>
+<perfect-scrollbar class="detail-scrollbar">
+  <div class="node-div" *ngIf="detailType==='node'">
+    <div class="block-div" *ngIf="actionType ==='view'">
+      <span class="block-title bordered">{{'NODE_INFO' | translate}}</span>
+      <div class="block-content bordered">
+        <table class="no-border info-table">
+          <tr class="odd">
+            <th class="table-head-cell"><span>Hostname</span></th>
+            <td class="table-info-cell">{{nodeInfo.id}}</td>
+          </tr>
+          <tr>
+            <th class="table-head-cell"><span>IP</span></th>
+            <td>{{nodeInfo.ip}}</td>
+          </tr>
+          <tr class="odd">
+            <th class="table-head-cell">SID</th>
+            <td class="table-info-cell">{{nodeInfo.sid}}</td>
+          </tr>
+
+        </table>
+      </div>
+    </div>
+
+    <div class="block-div" *ngIf="actionType ==='edit'">
+      <span class="block-title">{{'NODE_EIDT' | translate}}</span>
+      <div class="block-content">
+        <form [formGroup]="nodeForm" class="edit-form">
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="Hostname" formControlName="hostnameCtrl" required>
+            <mat-error *ngIf="nodeForm.hasError('required', 'hostnameCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Hostname'} }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="SID" formControlName="sidCtrl" required>
+            <mat-error *ngIf="nodeForm.hasError('required', 'sidCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'SID'} }}
+            </mat-error>
+            <mat-error *ngIf="nodeForm.hasError('pattern', 'sidCtrl')">
+              {{'NODE_SID_PATTERN' | translate}}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="IP" formControlName="ipCtrl" required>
+            <mat-error *ngIf="nodeForm.hasError('required', 'ipCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'IP'} }}
+            </mat-error>
+            <mat-error *ngIf="nodeForm.hasError('pattern', 'ipCtrl')">
+              {{'NODE_IP_PATTERN' | translate}}
+            </mat-error>
+
+          </mat-form-field>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="node-div" *ngIf="detailType==='link'">
+    <div class="block-div" *ngIf="actionType ==='view'">
+      <div class="block-title bordered">链路信息</div>
+      <div class="block-content bordered">
+        <table class="no-border info-table">
+          <tr class="odd">
+            <th class="table-head-cell">ID</th>
+            <td class="table-info-cell">{{linkInfo.id}}</td>
+          </tr>
+          <tr>
+            <th class="table-head-cell">Local</th>
+            <td class="table-info-cell">{{linkInfo.local}}</td>
+          </tr>
+          <tr class="odd">
+            <th>Remote</th>
+            <td>{{linkInfo.remote}}</td>
+          </tr>
+          <tr>
+            <th>IP</th>
+            <td>{{linkInfo.ip}}</td>
+          </tr>
+          <tr class="odd">
+            <th>SID</th>
+            <td>{{linkInfo.sid}}</td>
+          </tr>
+          <tr>
+            <th>Bandwidth</th>
+            <td>{{linkInfo.bandwidth}}</td>
+          </tr>
+          <tr class="odd">
+            <th>IGP</th>
+            <td>{{linkInfo.igp}}</td>
+          </tr>
+          <tr>
+            <th>TE</th>
+            <td>{{linkInfo.te}}</td>
+          </tr>
+          <tr class="odd">
+            <th>
+              <span>
+                Delay(ms)
+              </span>
+            </th>
+            <td>{{linkInfo.delay}}</td>
+          </tr>
+          <tr>
+            <th>
+              <span>
+                Affinity
+              </span>
+            </th>
+            <td>{{linkInfo.affinity}}</td>
+          </tr>
+        </table>
+
+        <div class="detail-table-title">QoS Info</div>
+        <table class="no-border info-table">
+          <tr class="bg-header-row">
+            <th><span>QoS_Class</span></th>
+            <th><span>预留带宽</span></th>
+            <th><span>可用带宽</span></th>
+          </tr>
+          <tr *ngFor="let item of linkInfo.qos_class;let i=index" [ngClass]="{'odd': i%2==0}">
+            <td><span>{{item.class}}</span></td>
+            <td><span>{{item.bandwidth_reserve}}</span></td>
+            <td><span>{{item.bandwidth_available}}</span></td>
+          </tr>
+
+        </table>
+      </div>
+    </div>
+
+    <div class="block-div" *ngIf="actionType ==='edit'">
+      <span class="block-title">链路编辑</span>
+      <div class="block-content">
+        <form [formGroup]="linkForm" class="edit-form">
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="ID" formControlName="idCtrl" [disabled]='true'>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="IP" formControlName="ipCtrl" required>
+            <mat-error *ngIf="linkForm.hasError('required', 'ipCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'IP'} }}
+            </mat-error>
+            <mat-error *ngIf="linkForm.hasError('pattern', 'ipCtrl')">
+              {{'NODE_IP_PATTERN' | translate}}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="SID" formControlName="sidCtrl" required>
+            <mat-error *ngIf="linkForm.hasError('required', 'sidCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'SID'} }}
+            </mat-error>
+            <mat-error *ngIf="linkForm.hasError('pattern', 'sidCtrl')">
+              {{'NODE_SID_PATTERN' | translate}}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field">
+            <mat-select placeholder="Local" required formControlName="localCtrl" disableOptionCentering>
+              <mat-option *ngFor="let node of nodeList" [value]="node.id">{{ node.id}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="linkForm.hasError('required', 'localCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Local Node'} }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field">
+            <mat-select placeholder="Remote" required formControlName="remoteCtrl" disableOptionCentering>
+              <mat-option *ngFor="let node of nodeList" [value]="node.id">{{ node.id}}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="linkForm.hasError('required', 'remoteCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Remote Node'} }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="Bandwidth" formControlName="bandwidthCtrl" required>
+            <mat-error *ngIf="linkForm.hasError('required', 'bandwidthCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Bandwidth'} }}
+            </mat-error>
+            <mat-error *ngIf="linkForm.hasError('pattern', 'bandwidthCtrl')">
+              {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Bandwidth'} }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="IGP" formControlName="igpCtrl" required>
+            <mat-error *ngIf="linkForm.hasError('required', 'igpCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'IGP'} }}
+            </mat-error>
+            <mat-error *ngIf="linkForm.hasError('pattern', 'igpCtrl')">
+              {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'IGP'} }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="TE" formControlName="teCtrl" required>
+            <mat-error *ngIf="linkForm.hasError('required', 'teCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'TE'} }}
+            </mat-error>
+            <mat-error *ngIf="linkForm.hasError('pattern', 'teCtrl')">
+              {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'TE'} }}
+            </mat-error>
+
+          </mat-form-field>
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="Delay(ms)" formControlName="delayCtrl" required>
+            <mat-error *ngIf="linkForm.hasError('required', 'delayCtrl')">
+              {{'COMMON_INPUT_REQUIRED' | translate:{name: 'Delay'} }}
+            </mat-error>
+            <mat-error *ngIf="linkForm.hasError('pattern', 'delayCtrl')">
+              {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Delay'} }}
+            </mat-error>
+
+          </mat-form-field>
+          <mat-form-field class="mat-form-field">
+            <input matInput placeholder="Affinity" formControlName="affinityCtrl">
+            <mat-error *ngIf="linkForm.hasError('pattern', 'affinityCtrl')">
+              {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: 'Affinity'} }}
+            </mat-error>
+          </mat-form-field>
+
+          <div formArrayName="qosFormArray">
+            <div *ngFor="let qos of qosFormArray.controls; let i=index">
+              <div [formGroupName]="i" style="display: flex;">
+                <!-- QoS_Class -->
+                <div style="width: 70%;">
+                  <mat-form-field class="mat-form-field">
+                    <mat-select placeholder="QoS_Class" required formControlName="classCtrl" disableOptionCentering>
+                      <mat-option [value]="'Default'">Default</mat-option>
+                      <mat-option [value]="'Gold'">Gold</mat-option>
+                      <mat-option [value]="'Silver'">Silver</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="qos.get('classCtrl').hasError('required')">
+                      {{'COMMON_INPUT_REQUIRED' | translate:{name: 'QoS_Class'} }}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field class="mat-form-field">
+                    <input matInput placeholder="预留带宽" formControlName="reserveCtrl" required>
+                    <mat-error *ngIf="qos.hasError('required', 'reserveCtrl')">
+                      {{'COMMON_INPUT_REQUIRED' | translate:{name: '预留带宽'} }}
+                    </mat-error>
+                    <mat-error *ngIf="qos.hasError('pattern', 'reserveCtrl')">
+                      {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: '预留带宽'} }}
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field class="mat-form-field">
+                    <input matInput placeholder="可用带宽" formControlName="availableCtrl">
+                    <mat-error *ngIf="qos.hasError('pattern', 'availableCtrl')">
+                      {{'COMMON_INPUT_PATTERN_NUMBERONLY' | translate:{name: '可用带宽'} }}
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+                <div style="width: 30%;">
+
+                  <button mat-icon-button color="primary" *ngIf="i==0" class="add">
+                    <mat-icon color="primary" (click)="addQosCtrl()">add_box</mat-icon>
+                  </button>
+                  <button mat-icon-button color="primary" *ngIf="i>0 || (qosFormArray.controls.length >1 && i===0)"
+                    class="delete">
+                    <mat-icon color="primary" (click)="removeQosCtrl(i)">delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</perfect-scrollbar>

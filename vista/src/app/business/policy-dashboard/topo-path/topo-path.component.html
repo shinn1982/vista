@@ -1,0 +1,12 @@
+<div class="path">
+  <ul class="breadcrumb" *ngIf="displayPath">
+    <li *ngFor="let node of displayPath; let i = index">
+      <a [class.active]="i === displayPath.length-1">
+        <span (click)="onNodeClick(i)">{{ node.name }}</span>
+        <i *ngIf="i !== displayPath.length-1" class="material-icons">
+          keyboard_arrow_right
+        </i>
+      </a>
+    </li>
+  </ul>
+</div>

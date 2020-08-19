@@ -1,0 +1,80 @@
+@import "../../../scss/variables/image-path.scss";
+@import "../../../scss/variables/colors.scss";
+@import "../../../scss/theme.scss";
+// for menu
+$menuNormalFont: rgba($white, 0.8);
+$menuActiveBg: rgba(255, 255, 255, 0.15);
+$menuActiveFont: $white;
+
+:host {
+  height: 60px;
+}
+
+.menu {
+  height: 60px;
+  font-size: 16px;
+  position: fixed;
+  // border-color: mat-color($primary, darker);
+  top: 0;
+  left: 0;
+  z-index: 99;
+
+  background: url($navBg) no-repeat;
+  background-position: center;
+  background-size: 105% 225%;
+
+  .navbar-icon {
+    margin: 0 30px 0 10px;
+    width: 59px;
+    height: 20px;
+    background: url($navLogo) no-repeat;
+  }
+
+  a {
+    display: inline-table;
+    cursor: pointer;
+    padding-left: 14px;
+    padding-right: 14px;
+    height: 100%;
+    line-height: 60px;
+    text-decoration: none;
+    color: $menuNormalFont;
+    border-radius: 0;
+    border-top: transparent solid 4px;
+
+    &:hover,
+    &.active {
+      background: $menuActiveBg;
+      color: $menuActiveFont;
+      border-top: 4px solid $white;
+    }
+  }
+
+  .menu-right {
+    position: absolute;
+    right: 35px;
+    display: flex;
+    align-items: center;
+
+    button.space-trigger {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      height: 28px;
+      line-height: 28px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      color: mat-color($primary);
+      font-size: 11px;
+      margin-right: 30px;
+    }
+
+    .user-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      color: white;
+    }
+  }
+}

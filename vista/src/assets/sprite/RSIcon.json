@@ -1,0 +1,44 @@
+{"frames": {
+
+"headend":
+{
+	"frame": {"x":1,"y":259,"w":200,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+	"sourceSize": {"w":200,"h":200}
+},
+"router":
+{
+	"frame": {"x":1,"y":1,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"switch":
+{
+	"frame": {"x":259,"y":1,"w":256,"h":256},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":256},
+	"sourceSize": {"w":256,"h":256}
+},
+"tailend":
+{
+	"frame": {"x":203,"y":259,"w":200,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":200,"h":200},
+	"sourceSize": {"w":200,"h":200}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "RSIcon.png",
+	"format": "RGBA8888",
+	"size": {"w":516,"h":460},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:779bce21d424ccb73f12f43ed2d42012:4ad23811ee9df9c15c48960fe4c1354f:5fe5ffe2a7b46f2eab66401744c03c4f$"
+}
+}

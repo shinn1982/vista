@@ -1,0 +1,298 @@
+@import '../../../../scss/variables/colors.scss';
+$border-color:#e5e5e6;
+
+:host{
+  box-sizing: border-box;
+}
+.toobar-container {
+  position: relative;
+  height: 40px;
+  line-height: 40px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  .toolbar-left-actions {
+    padding-left: 10px;
+  }
+  .toolbar-right-actions {
+    padding-right: 10px;
+  }
+}
+.detail-scrollbar {
+  padding-bottom: 60px;
+}
+
+.basic-section {
+  width: 80%;
+}
+
+table {
+  table-layout: fixed;
+  text-align: left;
+
+  td {
+    word-break: break-all;
+  }
+
+  &.border {
+    border-collapse: collapse;
+
+    th,
+    td {
+      border: 2px solid #eee;
+      padding: 0 8px;
+    }
+  }
+
+  &.basic-info {
+
+
+    th {
+      width: 30%;
+    }
+
+    td {
+      width: 70%;
+    }
+  }
+
+  &.sid-table {
+
+    th {
+      &.sid-header {
+        width: 20%;
+      }
+
+      &.ip-header {
+        width: 30%;
+      }
+
+      &.status-header,
+      &.type-header {
+        width: 25%;
+      }
+    }
+
+    span.sid-type {
+      background: $blue600;
+      color: white;
+      padding: 3px 20px;
+      border-radius: 10px;
+    }
+  }
+}
+
+.per-alg-section:not(:last-child) {
+  margin-bottom: 2em;
+} 
+
+.alg-fieldset {
+  border: #aaaaaa dashed 1px;
+  border-radius: 4px;
+  position: relative;
+  padding: 12px 12px 10px 12px;
+  margin-top: 10px;
+  &:not(:last-child) {
+    margin-bottom: 2em;
+  }
+  .legend {
+    background: #FFFFFF;
+    font-weight: 600;
+    width: 60px;
+    position: absolute;
+    left: 15px;
+    top: -18px;
+    text-align: center;
+  }
+  .btn-remove-alg {
+    position: absolute;
+    right: 15px;
+    top: -20px;
+    background: #ffffff;
+    border-radius: 20px;
+    width: 40px;
+    text-align: center;
+  }
+}
+
+.btn-add-alg {
+  margin-top: 1em;
+  padding:2px 10px;
+  border:rgb(170, 170, 170) dashed 1px;
+  border-radius: 4px;
+  text-align: center;
+  color: #333;
+  cursor: pointer;
+  transition: .3s background-color ease;
+  &:hover {
+    background-color: #f7f7f7;
+  }
+}
+
+
+.form-field {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  padding-bottom: 1em;
+}
+
+.radio-div {
+  position: relative;
+  text-align: left;
+  label {
+    display: inline-block;
+    width: 6em;
+  }
+
+  .mat-radio-button {
+    margin-right: 10px;
+  }
+}
+.buttons-div {
+  button {
+    margin-right: 10px;
+  }
+}
+
+.segment-list-section {
+  // border: $border-color 1px solid;
+  .segment-list-title {
+    color: #26a9f0;
+    background: #eaeeef;
+    height: 38px;
+    line-height: 38px;
+    padding-left: 15px;
+  }
+  .radio-div {
+    padding-left: 15px;
+    padding-top: .5em;
+  }
+}
+.segment-indent {
+  padding-left: 15px;
+}
+.algResult-section {
+
+  .algResult-content {
+    table.border {
+      th {
+        background-color: #f7f7f7 !important;
+        font-weight: 600;
+        text-align: center;
+        &.index-header {
+          width: 50px;
+        }
+        &.apply-header {
+          width: 60px;
+        }
+      }
+      td {
+        &.apply-cell{
+          text-align: center;
+        }
+        &.operation-cell {
+          text-align: center;
+          .opertion-buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            flex-direction: row;
+            flex-wrap: wrap;
+          }
+        }
+        .table-link-btn {
+          color: $blue600;
+          padding: .5em;
+          cursor: pointer;
+          transition: 0.3s opacity ease;
+          &:hover {
+            opacity: 0.75;
+          }
+        }
+      }
+    }
+  }
+}
+.detail-content {
+  font-size: 14px;
+  color: $grey;
+}
+table {
+  width: 100%;
+  margin-top: 5px;
+
+  tr {
+    height: 40px;
+    td {
+      word-break: break-all;
+      padding: 5px 15px;
+      line-height: 22px;
+    }
+  }
+  &.info-table {
+    th {
+      background: initial !important;
+      text-align: left;
+      color:#666;
+      padding: 0 8px;
+      font-weight: bold;
+      &.table-head-cell {
+        width: 20%;
+      }
+    }
+    
+    td {
+      text-align: left;
+      &.table-info-cell {
+        width: 80%;
+      }
+      
+    }
+    tr {
+      &.odd {
+        background: #f4f9ff !important;
+      }
+    }
+  }
+  &.no-border {
+    border: 0;
+    tr {
+      border: 0;
+      th,td {
+        border: 0;
+      }
+    }
+  }
+  
+  &.border {
+    border-collapse: collapse;
+    th,td {
+      border: 2px solid #eee;
+      padding: 0 8px;
+    }
+  }
+}
+
+.segment-row {
+  display: flex;
+  .sid-field {
+    width: 32%;
+    margin-right: 1em;
+  }
+  .ip-field {
+    width: 32%;
+    margin-right: 1em;
+  }
+  .icon-field {
+    padding-top: 1em;
+    width: 30%;
+    .sid-list-icon-btn {
+      cursor: pointer;
+    }
+  }
+}
+
+.each-path-cell {
+  padding: .5em 0;
+}

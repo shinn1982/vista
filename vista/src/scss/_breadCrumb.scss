@@ -1,0 +1,35 @@
+@import "./variables/colors.scss";
+/*bread-crumb*/
+.bread-crumb {
+  height: 40px;
+  line-height: 40px;
+  width: 100%;
+
+  ul {
+    li:last-child {
+      &::after {
+        content: "";
+      }
+    }
+
+    li {
+      list-style: none;
+      display: inline;
+      line-height: 40px;
+      font-size: 14px;
+      color: $grey;
+      cursor: pointer;
+
+      &::after {
+        content: ">";
+        color: $subpage-crumb-arrow;
+        margin: 0 5px;
+      }
+    }
+
+    .disabled {
+      color: $black054;
+      cursor: auto;
+    }
+  }
+}

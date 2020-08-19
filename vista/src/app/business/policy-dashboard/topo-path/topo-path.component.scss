@@ -1,0 +1,48 @@
+$prime-color: #1a73e8;
+:host {
+  height: 42px;
+  background-color: #f0f4f8;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  line-height: 42px;
+}
+
+.path {
+  height: 42px;
+  background-color: #f0f4f8;
+  display: flex;
+  align-items: center;
+  ul.breadcrumb {
+    display: inline-block;
+    list-style-type: none;
+    margin-left: 26px;
+    li {
+      display: inline-block;
+      font-size: 13px;
+      a {
+        cursor: pointer;
+        color: $prime-color;
+        text-decoration: none;
+        display: flex;
+        align-content: center;
+        transition: all 0.3s ease-in;
+        &.active {
+          color: #3c464d;
+        }
+        &:hover {
+          color: rgba($prime-color, 0.8);
+        }
+        i {
+          color: #aeb0b9;
+          font-size: 13px !important;
+          margin: auto;
+          cursor: default;
+        }
+        &.hidden {
+          display: none;
+        }
+      }
+    }
+  }
+}
