@@ -1,0 +1,13 @@
+log:
+  level: DEBUG
+  handler: file
+  file_dir: /home/control/yare-core-log/vista-backend
+  file_name: vista_backend.log
+
+mongo_url: mongodb://0.0.0.0:27017/pasta
+
+redis_url: redis://0.0.0.0:6379/0
+
+celery_broker_url: redis://0.0.0.0:6379/0
+
+celery_result_backend: redis://0.0.0.0:6379/0

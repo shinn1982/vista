@@ -1,0 +1,1181 @@
+Non-bod Policy
+=======================
+
+Policy without bandwidth on demand.
+
+
+Tips
+
+- Include和Exclude集合传入Node及Link的ID，请保证ID的唯一性
+- Include是一个有序的集合，其顺序会影响计算结果
+
+字段说明：
+
+- loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10
+- sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽
+- top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果
+- limit: 返回指定sorter满足limit限制的路径，如delay小于1s
+- disjoint: 是否计算保护路径，默认为false，如果置为true，计算基于这次最优方案的node-disjoint路径，如果为空，计算link-disjoint路径
+
+Synchronous Create Non-bod Policy
+---------------------------------
+
+创建非BoD SR Policy的同步调用接口
+
+.. code-block:: sh
+
+    POST api/pasta/nonbod_pasta
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``sr_policy``            body     sr_policy True      SR policy information
+``global``               body     global    True      Global setting information
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``ip``                   body     string    True      Node IP address
+``sid``                  body     integer   False     Node SID
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   False     Link SID
+``igp``                  body     integer   False     Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``traffic_flow``         body     integer   False     Link traffic flow (default: 0)
+=======================  ======== ========= ========= ====================================================
+
+**sr_policy**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+=======================  ======== ========= ========= ====================================================
+
+**global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algorithm``            body     algorithm True      Algorithm list
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1",
+        "ip": "1.1.1.1",
+        "sid": 60001
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1:300012",
+        "local": "P1",
+        "remote": "P2",
+        "ip": "1.1.1.2",
+        "sid": 30012,
+        "igp": 10,
+        "te": 10,
+        "delay": 1000,
+        "bandwidth": 100,
+        "affinity": 0,
+        "traffic_flow": 100
+    }
+
+**Sr_policy Example**
+
+.. code-block:: json
+
+    {
+        "headend": "P1",
+        "tailend": "P3",
+        "metric": "igp",
+        "bandwidth": 0,
+        "affinity": "0x0",
+        "mask": "0x0",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": false
+      }
+
+**Global Example**
+
+.. code-block:: json
+
+    {
+        "algorithm": [{
+          "algo": 0
+        },{
+          "algo": 1,
+          "sorter": "metric",
+          "top": 10,
+          "limit": 0,
+          "loose": true
+        }],
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+      }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001
+        }, {
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }, {
+            "id": "P4",
+            "ip": "4.4.4.4",
+            "sid": 60004
+        }, {
+            "id": "P5",
+            "ip": "5.5.5.5",
+            "sid": 60005
+        }, {
+            "id": "P6",
+            "ip": "6.6.6.6",
+            "sid": 60006
+        }],
+      "links": [
+        {
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 100
+        },{
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 100
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 20
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 10
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 10
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 85
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "traffic_flow": 10
+        }],
+      "sr_policy":{
+        "headend": "P1",
+        "tailend": "P3",
+        "metric": "igp",
+        "bandwidth": 0,
+        "affinity": "0x0",
+        "mask": "0x0",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": false
+      },
+      "global":{
+        "algorithm": [{
+          "algo": 0
+        },{
+          "algo": 1,
+          "sorter": "metric",
+          "top": 10,
+          "limit": 0,
+          "loose": true
+        }],
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+      }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Error info
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``algo_type``            body     integer   Algorithm type: 0=SPF ; 1 = Non SPF
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [{
+                "algo_type": 0,
+                "status": true,
+                "info": {},
+                "data": {
+                    "sids": [{
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "paths": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "attr": {
+                        "igp": 20,
+                        "te": 20,
+                        "delay": 200.0,
+                        "min_hop": 2,
+                        "max_min_band": 0
+                    },
+                    "other": [],
+                    "time": 0.13
+                }
+            }, {
+                "algo_type": 1,
+                "status": true,
+                "info": {},
+                "data": {
+                    "sids": [{
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "paths": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "attr": {
+                        "igp": 20,
+                        "te": 20,
+                        "delay": 200.0,
+                        "min_hop": 2,
+                        "max_min_band": 0
+                    },
+                    "other": [{
+                            "sids": [{
+                                    "id": "P4",
+                                    "ip": "4.4.4.4",
+                                    "sid": 60004
+                                }, {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30045",
+                                    "P5",
+                                    "P5:30053",
+                                    "P3"
+                                ],
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30045",
+                                        "P5",
+                                        "P5:30053",
+                                        "P3"
+                                    ],
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 0
+                            }
+                        }
+                    ],
+                    "time": 0.23
+                }
+            }
+        ]
+    }
+
+
+Asynchronous Create Non-bod Policy
+----------------------------------
+
+创建非BoD SR Policy的异步调用接口
+
+.. code-block:: sh
+
+    POST api/pasta/async_nonbod_pasta
+
+**Request**
+
+与同步接口的请求格式相同，具体请参见Synchronous Create Non-bod Policy部分的内容。
+
+**Response paramters in data list**
+
+异步调用接口会以task_id为返回值，task_id是异步任务的id，通过异步任务查询接口可以获得任务的执行状态，具体请参见vista/api/async_task部分
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "task_id": "af2b62e3-9c05-4ae9-93c5-59073750bc67"
+            }
+        ]
+    }
+
+
+Synchronous Non-bod Policies Reoptimize
+---------------------------------------
+
+Non-bod SR Policies全局重优化的同步调用接口
+
+.. code-block:: sh
+
+    POST api/reopt/nonbod_reoptimize
+
+Non-bod Policies Reoptimize
+
+| 输入拓扑信息（Node，Link），所有待优化的non-bod policies，使用的算法类型及参数，重优化全局参数，对所有non-bod policies进行重优化计算
+| 计算后，会根据算法类型，返回对应的算路结果，包括SID List、及其逐跳路径信息
+| 全局重优化会为每一条传入的policy重新计算路径，全部policies重算成功后，返回所有policies更新后的结果；如果中途更新失败，则返回优化失败
+
+Tips
+
+- 全局重优化计算可支持根据输入的拓扑，policies信息，使用不同的算路算法，同时计算多种优化结果；所使用的算法类型，可在global全局参数中指定，各个算法相互独立计算执行
+- 在输入的Node结构中，需要提供节点所有的prefix信息，包括（prefix，prefix_algorithm，prefix_sid）；为不同policy计算路径时，根据policy的algorithm属性，在nodes的prefix中过滤出ip，sid信息
+- bod policies的重优化过程，需要对policy的优化顺序进行排序，需在全局参数sorting中指定基于预留带宽/优先级的排序方式
+
+
+字段说明：
+
+| 使用Non-SPF算法对policies进行重优化时，需要提供如下参数：
+
+- loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10
+- sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽
+- top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果
+- limit: 返回指定sorter满足limit限制的路径，如delay小于1s
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``sr_policy``            body     sr_policy True      SR policy List
+``global``               body     global    True      Global setting information
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``prefix``               body     string    True      Node IP address for relative prefix
+``prefix_algorithm``     body     integer   True      alogrithm id for relative prefix
+``prefix_sid``           body     integer   True      Node SID for relative prefix
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   True      Link SID
+``igp``                  body     integer   True      Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+=======================  ======== ========= ========= ====================================================
+
+**sr_policy**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      SR Policy identity
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+=======================  ======== ========= ========= ====================================================
+
+**global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algorithm``            body     algorithm True      Algorithm list
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1",
+        "prefix": [
+            {
+            "prefix": "1.1.1.1/32",
+            "prefix_algorithm": 0,
+            "prefix_sid": 60001
+            }
+        ]
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "affinity": 0,
+        "remote": "P2",
+        "sid": 30012,
+        "local": "P1",
+        "bandwidth": 100,
+        "ip": "1.1.1.2",
+        "te": 10,
+        "id": "P1:30012",
+        "delay": 100,
+        "igp": 10
+    }
+
+**SR_policy Example**
+
+.. code-block:: json
+
+    {
+        "id":"SR1",
+        "headend": "P1",
+        "tailend": "P3",
+        "algorithm": 0,
+        "metric": "te",
+        "affinity": "0x0",
+        "mask": "0x0",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": false
+    }
+
+**Global Example**
+
+.. code-block:: json
+
+    {
+        "algorithm": [{
+            "algo": 0
+        },{
+            "algo": 1,
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": true
+        }],
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+    }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1",
+            "prefix": [{
+                "prefix": "1.1.1.1/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60001
+            }]
+        }, {
+            "id": "P2",
+            "prefix": [{
+                "prefix": "2.2.2.2/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60002
+            }]
+        }, {
+            "id": "P3",
+            "prefix": [{
+                "prefix": "3.3.3.3/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60003
+            }]
+        }, {
+            "id": "P4",
+            "prefix": [{
+                "prefix": "4.4.4.4/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60004
+            }]
+        }, {
+            "id": "P5",
+            "prefix": [{
+                "prefix": "5.5.5.5/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60005
+            }]
+        }, {
+            "id": "P6",
+            "prefix": [{
+                "prefix": "6.6.6.6/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60006
+            }]
+        }],
+        "links": [
+        {
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10
+        },{
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10
+        }],
+        "sr_policy":[
+        {
+            "id":"SR1",
+            "headend": "P1",
+            "tailend": "P3",
+            "algorithm": 0,
+            "metric": "te",
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false
+        },{
+            "id":"SR2",
+            "headend": "P1",
+            "tailend": "P3",
+            "algorithm": 0,
+            "metric": "te",
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false
+        },{
+            "id":"SR5",
+            "headend": "P1",
+            "tailend": "P3",
+            "algorithm": 0,
+            "metric": "te",
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false
+        },{
+            "id":"SR3",
+            "headend": "P1",
+            "tailend": "P3",
+            "algorithm": 0,
+            "metric": "te",
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false
+        },{
+            "id":"SR4",
+            "headend": "P1",
+            "tailend": "P3",
+            "algorithm": 0,
+            "metric": "te",
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false
+        }],
+        "global":{
+            "algorithm": [{
+              "algo": 0
+            },{
+              "algo": 1,
+              "sorter": "metric",
+              "top": 10,
+              "limit": 0,
+              "loose": true
+            }],
+            "real_traffic": false,
+            "traffic_ratio": 1.0,
+            "reopt_interval": 300
+        }
+    }
+
+**Response paramters**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Error info
+``data``                 body     data      Data detail info all algorithm instances involved
+=======================  ======== ========= ====================================================
+
+**Response paramters in single algorithm instance data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``algo_type``            body     integer   Algorithm type: 0=SPF ; 1 = Non SPF
+``status``               body     bool      Success or not for current algorithm
+``info``                 body     dic       Error info for current algorithm
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``id``                   body     string    Policy identity
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "algo_type": 0,
+                "status": true,
+                "info": {},
+                "data": {
+                    "sids": [
+                        {
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "paths": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "attr": {
+                        "igp": 20,
+                        "te": 20,
+                        "delay": 200.0,
+                        "min_hop": 2,
+                        "max_min_band": 0
+                    },
+                    "other": [],
+                    "time": 0.15
+                }
+            },
+            {
+                "algo_type": 1,
+                "status": true,
+                "info": {},
+                "data": {
+                    "sids": [
+                        {
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "paths": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "attr": {
+                        "igp": 20,
+                        "te": 20,
+                        "delay": 200.0,
+                        "min_hop": 2,
+                        "max_min_band": 0
+                    },
+                    "other": [
+                        {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30045",
+                                    "P5",
+                                    "P5:30053",
+                                    "P3"
+                                ],
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30045",
+                                        "P5",
+                                        "P5:30053",
+                                        "P3"
+                                    ],
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 0
+                            }
+                        }
+                    ],
+                    "time": 0.26
+                }
+            }
+        ]
+    }
+
+
+Asynchronous Non-bod Policies Reoptimize
+----------------------------------------
+
+Non-bod SR Policies全局重优化的异步调用接口
+
+.. code-block:: sh
+
+    POST api/reopt/async_nonbod_reoptimize
+
+**Request**
+
+与同步接口的请求格式相同，具体请参见Synchronous Create Non-bod Policy部分的内容。
+
+**Response paramters in data list**
+
+异步调用接口会以task_id为返回值，task_id是异步任务的id，通过异步任务查询接口可以获得任务的执行状态，具体请参见vista/api/async_task部分
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "task_id": "af2b62e3-9c05-4ae9-93c5-59073750bc67"
+            }
+        ]
+    }

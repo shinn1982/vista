@@ -1,0 +1,6 @@
+log:
+  level: DEBUG
+  handler: file
+  file_dir: /home/control/yare-core-log/vista-backend
+  file_name: vista_backend.log
+

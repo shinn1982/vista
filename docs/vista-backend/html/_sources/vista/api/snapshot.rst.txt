@@ -1,0 +1,2465 @@
+Snapshot Operations
+===================
+
+The network snapshot includes node, link, path, params modules.
+
+
+Create Snapshot
+---------------------------------
+
+创建Snapshot
+
+.. code-block:: sh
+
+    POST api/snapshot
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "snapshot_name": "snapshot1"
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Get Snapshot
+---------------------------------
+
+查询所有Snapshot名称
+
+.. code-block:: sh
+
+    Get api/snapshot
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``_id``                  body     string    Snapshot instaces identifier
+``snapshot_name``        body     string    snapshot name
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "_id": "5f11d583cd66dfc29b672f1f",
+                "snapshot_name": "topo1"
+            },
+            {
+                "_id": "5f11d598cd66dfc29b672f20",
+                "snapshot_name": "topo2"
+            }
+        ]
+    }
+
+Delete Snapshot
+---------------------------------
+
+删除Snapshot
+
+.. code-block:: sh
+
+    Delete api/snapshot
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+with request like Delete ``/api/snapshot?snapshot_name=snapshot1``
+
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Create Topology
+---------------------------------
+
+创建Topology
+
+.. code-block:: sh
+
+    POST api/snapshot/topo
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``ip``                   body     string    True      Node IP address
+``sid``                  body     integer   False     Node SID
+``x_axis``               body     Float     False     x axis
+``y_axis``               body     Float     False     y axis
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   False     Link SID
+``igp``                  body     integer   False     Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``qos_class``            body     qos_class False     Qos class info
+=======================  ======== ========= ========= ====================================================
+
+**qos_class**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``class``                body     string    True      Qos class name
+``bandwidth_reserve``    body     integer   True      Class bandwidth reservation
+``bandwidth_available``  body     integer   True      Class bandwidth available
+``traffic_flow``         body     integer   True      Class traffic flow
+=======================  ======== ========= ========= ====================================================
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "snapshot_name": "topo3",
+      "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P4",
+            "ip": "4.4.4.4",
+            "sid": 60004,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P5",
+            "ip": "5.5.5.5",
+            "sid": 60005,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P6",
+            "ip": "6.6.6.6",
+            "sid": 60006,
+            "x_axis": null,
+            "y_axis": null
+        }],
+      "links": [
+        {
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }]
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Update Topology
+---------------------------------
+
+更新Topology，输入全部topology内容，全量更新
+
+.. code-block:: sh
+
+    PUT api/snapshot/topo
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``ip``                   body     string    True      Node IP address
+``sid``                  body     integer   False     Node SID
+``x_axis``               body     Float     False     x axis
+``y_axis``               body     Float     False     y axis
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   False     Link SID
+``igp``                  body     integer   False     Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``qos_class``            body     qos_class False     Qos class info
+=======================  ======== ========= ========= ====================================================
+
+**qos_class**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``class``                body     string    True      Qos class name
+``bandwidth_reserve``    body     integer   True      Class bandwidth reservation
+``bandwidth_available``  body     integer   True      Class bandwidth available
+``traffic_flow``         body     integer   True      Class traffic flow
+=======================  ======== ========= ========= ====================================================
+
+with request like PUT ``/api/snapshot/topo?snapshot_name=snapshot1``
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "snapshot_name": "topo1",
+      "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60011,
+            "x_axis": null,
+            "y_axis": null
+        },  {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P4",
+            "ip": "4.4.4.4",
+            "sid": 60004,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P5",
+            "ip": "5.5.5.5",
+            "sid": 60005,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P6",
+            "ip": "6.6.6.6",
+            "sid": 60066,
+            "x_axis": null,
+            "y_axis": null
+        }],
+      "links": [
+        {
+            "affinity": 1,
+            "remote": "P4",
+            "sid": 30063,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 500,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 500,
+                "traffic_flow": 0
+                }
+            ]
+        }]
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Get Topology
+---------------------------------
+
+获取Topology
+
+.. code-block:: sh
+
+    Get api/snapshot/topo
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+with request like Get ``/api/snapshot/topo?snapshot_name=snapshot1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {
+            "_id": "5f11be474241d354a338005f",
+            "snapshot_name": "topo1",
+            "nodes": [
+                {
+                    "id": "P1",
+                    "ip": "1.1.1.1",
+                    "sid": 60001,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P2",
+                    "ip": "2.2.2.2",
+                    "sid": 60002,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P3",
+                    "ip": "3.3.3.3",
+                    "sid": 60003,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P4",
+                    "ip": "4.4.4.4",
+                    "sid": 60004,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P5",
+                    "ip": "5.5.5.5",
+                    "sid": 60005,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P6",
+                    "ip": "6.6.6.6",
+                    "sid": 60006,
+                    "x_axis": null,
+                    "y_axis": null
+                }
+            ],
+            "links": [
+                {
+                    "affinity": 0,
+                    "remote": "P2",
+                    "sid": 30012,
+                    "local": "P1",
+                    "bandwidth": 100,
+                    "ip": "1.1.1.2",
+                    "te": 10,
+                    "id": "P1:30012",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P3",
+                    "sid": 30023,
+                    "local": "P2",
+                    "bandwidth": 100,
+                    "ip": "2.2.2.3",
+                    "te": 10,
+                    "id": "P2:30023",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P4",
+                    "sid": 30014,
+                    "local": "P1",
+                    "bandwidth": 100,
+                    "ip": "1.1.1.4",
+                    "te": 10,
+                    "id": "P1:30014",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P5",
+                    "sid": 30045,
+                    "local": "P4",
+                    "bandwidth": 100,
+                    "ip": "4.4.4.5",
+                    "te": 10,
+                    "id": "P4:30045",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P6",
+                    "sid": 30046,
+                    "local": "P4",
+                    "bandwidth": 100,
+                    "ip": "4.4.4.6",
+                    "te": 10,
+                    "id": "P4:30046",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P3",
+                    "sid": 30053,
+                    "local": "P5",
+                    "bandwidth": 100,
+                    "ip": "5.5.5.3",
+                    "te": 10,
+                    "id": "P5:30053",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P3",
+                    "sid": 30063,
+                    "local": "P6",
+                    "bandwidth": 100,
+                    "ip": "6.6.6.3",
+                    "te": 10,
+                    "id": "P6:30063",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+
+Delete Topology
+---------------------------------
+
+删除Topology
+
+.. code-block:: sh
+
+    Delete api/snapshot/topo
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+with request like Delete ``/api/snapshot/topo?snapshot_name=snapshot1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Create Path
+---------------------------------
+
+创建Path
+
+.. code-block:: sh
+
+    POST api/snapshot/policy
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+``id``                   body     string    True      path identifier
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``class``                body     string    False     Class name
+``priority``             body     integer   False     Re-optimization priority
+``segment_list``         body     string    False     segment list
+``path``                 body     list      False     list of explicit paths
+``segments``             body     list      False     group of segment paths
+``algorithm``            body     algorithm False     algorithm params
+=======================  ======== ========= ========= ====================================================
+
+**Algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "snapshot_name": "topo1",
+      "id": "sr1",
+      "headend": "P1",
+      "tailend": "P3",
+      "metric": "igp",
+      "bandwidth": 30,
+      "affinity": "0x0",
+      "mask": "0x0",
+      "include": [],
+      "exclude": [],
+      "tiebreaker": false,
+      "disjoint": true,
+      "class":"Gold",
+      "priority": 1,
+      "segment_list": "60003",
+      "path": [["P1", "P1:30012", "P2", "P2:30023", "P3"]],
+      "segments": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+      "algorithm": {
+            "algo": 1,
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": true
+       }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Update Path
+---------------------------------
+
+更新Path
+
+.. code-block:: sh
+
+    PUT api/snapshot/policy
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+``id``                   path     string    True      path identifier
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``class``                body     string    False     Class name
+``priority``             body     integer   False     Re-optimization priority
+``segment_list``         body     string    False     segment list
+``path``                 body     list      False     list of explicit paths
+``segments``             body     list      False     group of segment paths
+``algorithm``            body     algorithm False     algorithm params
+=======================  ======== ========= ========= ====================================================
+
+**Algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+with request like Put ``/api/snapshot/policy?snapshot_name=snapshot1&id=sr1``
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "headend": "P1",
+      "tailend": "P3",
+      "metric": "igp",
+      "bandwidth": 30,
+      "affinity": "0x0",
+      "mask": "0x0",
+      "include": [],
+      "exclude": [],
+      "tiebreaker": false,
+      "disjoint": true,
+      "class":"Gold",
+      "priority": 1,
+      "segment_list": "60003",
+      "path": [["P1", "P1:30012", "P2", "P2:30023", "P3"]],
+      "segments": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+      "algorithm": {
+            "algo": 1,
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": true
+       }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Get All Paths
+---------------------------------
+
+查询Snapshot中的所有Path
+
+.. code-block:: sh
+
+    GET api/snapshot/policy
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+with request like Get ``/api/snapshot/policy?snapshot_name=snapshot1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "_id": "5f11be7b4241d354a3380060",
+                "snapshot_name": "topo1",
+                "id": "sr1",
+                "headend": "P1",
+                "tailend": "P3",
+                "metric": "igp",
+                "bandwidth": 30,
+                "affinity": "0x0",
+                "mask": "0x0",
+                "include": [],
+                "exclude": [],
+                "tiebreaker": false,
+                "disjoint": true,
+                "class": "Gold",
+                "priority": 1,
+                "segment_list": "60003",
+                "path": [
+                    [
+                        "P1",
+                        "P1:30012",
+                        "P2",
+                        "P2:30023",
+                        "P3"
+                    ]
+                ],
+                "segments": [
+                    [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ]
+                ],
+                "algorithm": {
+                    "algo": 1,
+                    "sorter": "metric",
+                    "top": 10,
+                    "limit": 0,
+                    "loose": true
+                }
+            }
+        ]
+    }
+
+Get One Paths
+---------------------------------
+
+查询Snapshot中的某一条Path
+
+.. code-block:: sh
+
+    GET api/snapshot/policy
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+``id``                   path     string    True      Path identifier
+=======================  ======== ========= ========= ====================================================
+
+with request like Get ``/api/snapshot/policy?snapshot_name=snapshot1&id=sr1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {
+            "_id": "5f11be7b4241d354a3380060",
+            "snapshot_name": "topo1",
+            "id": "sr1",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "igp",
+            "bandwidth": 30,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": true,
+            "class": "Gold",
+            "priority": 1,
+            "segment_list": "60003",
+            "path": [
+                [
+                    "P1",
+                    "P1:30012",
+                    "P2",
+                    "P2:30023",
+                    "P3"
+                ]
+            ],
+            "segments": [
+                [
+                    [
+                        "P1",
+                        "P1:30012",
+                        "P2",
+                        "P2:30023",
+                        "P3"
+                    ]
+                ]
+            ],
+            "algorithm": {
+                "algo": 1,
+                "sorter": "metric",
+                "top": 10,
+                "limit": 0,
+                "loose": true
+            }
+        }
+    }
+
+Delete Path
+---------------------------------
+
+删除Path
+
+.. code-block:: sh
+
+    Delete api/snapshot/policy
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+``id``                   path     string    True      Path identifier
+=======================  ======== ========= ========= ====================================================
+
+with request like Delete ``/api/snapshot/policy?snapshot_name=snapshot1&id=sr1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Create Params
+---------------------------------
+
+创建params
+
+.. code-block:: sh
+
+    POST api/snapshot/params
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+``algorithm``            body     algorithm False     Algorithm params
+``global_optimize``      body     global    False     Global Optimize params
+``congest_optimize``     body     congest   False     Congest Optimize params
+=======================  ======== ========= ========= ====================================================
+
+**Algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``sorting``              body     string    True      Policies sort algorithm type
+``flow_factor``          body     integer   True      Bandwidth / Traffic effecting factor (default: 1)
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**Congest**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``reopt_node``           body     string    True      Congestion optimize mode
+``flow_factor``          body     integer   True      Bandwidth/traffic effecting factor (default: 1)
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+``congest_threshold``    body     float     True      Threshold for congested link
+``target_threshold``     body     float     True      Link congestion optimize target
+``prioriry_prefer``      body     float     True      Prefered priority type for candidate policy
+``traffic_prefer``       body     float     True      Prefered traffic flow type for candidate policy
+``prioriry_weight``      body     float     True      Priority weight for calculating cost of candidate policy
+``bandwidth_weight``     body     float     True      Bandwidth weight for calculating cost of candidate policy
+=======================  ======== ========= ========= ====================================================
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "snapshot_name": "topo1",
+        "algorithm": [
+        {
+            "algo": "1",
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": true
+        }, {
+            "algo": "0",
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": false
+        }],
+        "global_optimize":{
+            "sorting": "bandwidth_desc",
+            "flow_factor": 1.0,
+            "real_traffic": false,
+            "traffic_ratio": 1.0
+        },
+        "congest_optimize":{
+            "reopt_mode": "loose",
+            "flow_factor": 1.0,
+            "real_traffic": false,
+            "traffic_ratio": 1.0,
+            "congest_threshold": 0.8,
+            "target_threshold": 0.7,
+            "prioriry_prefer": "HIGH",
+            "traffic_prefer": "HIGH",
+            "priority_weight": 0.5,
+            "bandwidth_weight": 0.5
+        }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Update Params
+---------------------------------
+
+更新Params，输入全部params内容，全量更新
+
+.. code-block:: sh
+
+    PUT api/snapshot/params
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        body     string    True      Snapshot name
+``algorithm``            body     algorithm False     Algorithm params
+``global_optimize``      body     global    False     Global Optimize params
+``congest_optimize``     body     congest   False     Congest Optimize params
+=======================  ======== ========= ========= ====================================================
+
+**Algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``sorting``              body     string    True      Policies sort algorithm type
+``flow_factor``          body     integer   True      Bandwidth / Traffic effecting factor (default: 1)
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**Congest**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``reopt_node``           body     string    True      Congestion optimize mode
+``flow_factor``          body     integer   True      Bandwidth/traffic effecting factor (default: 1)
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+``congest_threshold``    body     float     True      Threshold for congested link
+``target_threshold``     body     float     True      Link congestion optimize target
+``prioriry_prefer``      body     float     True      Prefered priority type for candidate policy
+``traffic_prefer``       body     float     True      Prefered traffic flow type for candidate policy
+``prioriry_weight``      body     float     True      Priority weight for calculating cost of candidate policy
+``bandwidth_weight``     body     float     True      Bandwidth weight for calculating cost of candidate policy
+=======================  ======== ========= ========= ====================================================
+
+with request like PUT ``/api/snapshot/params?snapshot_name=snapshot1``
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "snapshot_name": "topo1",
+        "algorithm": [
+        {
+            "algo": "1",
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": true
+        }, {
+            "algo": "0",
+            "sorter": "metric",
+            "top": 10,
+            "limit": 0,
+            "loose": false
+        }],
+        "global_optimize":{
+            "sorting": "bandwidth_desc",
+            "flow_factor": 1.0,
+            "real_traffic": false,
+            "traffic_ratio": 1.0
+        },
+        "congest_optimize":{
+            "reopt_mode": "loose",
+            "flow_factor": 1.0,
+            "real_traffic": false,
+            "traffic_ratio": 1.0,
+            "congest_threshold": 0.8,
+            "target_threshold": 0.7,
+            "prioriry_prefer": "HIGH",
+            "traffic_prefer": "HIGH",
+            "priority_weight": 0.5,
+            "bandwidth_weight": 0.5
+        }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Get Params
+---------------------------------
+
+获取Params
+
+.. code-block:: sh
+
+    Get api/snapshot/params
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+with request like Get ``/api/snapshot/params?snapshot_name=snapshot1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {
+            "_id": "5f11bea24241d354a3380061",
+            "snapshot_name": "topo1",
+            "algorithm": [
+                {
+                    "algo": "1",
+                    "sorter": "metric",
+                    "top": 10,
+                    "limit": 0,
+                    "loose": true
+                },
+                {
+                    "algo": "0",
+                    "sorter": "metric",
+                    "top": 10,
+                    "limit": 0,
+                    "loose": false
+                }
+            ],
+            "global_optimize": {
+                "sorting": "bandwidth_desc",
+                "flow_factor": 1.0,
+                "real_traffic": false,
+                "traffic_ratio": 1.0
+            },
+            "congest_optimize": {
+                "reopt_mode": "loose",
+                "flow_factor": 1.0,
+                "real_traffic": false,
+                "traffic_ratio": 1.0,
+                "congest_threshold": 0.8,
+                "target_threshold": 0.7,
+                "prioriry_prefer": "HIGH",
+                "traffic_prefer": "HIGH",
+                "priority_weight": 0.5,
+                "bandwidth_weight": 0.5
+            }
+        }
+    }
+
+Delete Params
+---------------------------------
+
+删除Params
+
+.. code-block:: sh
+
+    Delete api/snapshot/params
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+=======================  ======== ========= ========= ====================================================
+
+with request like Delete ``/api/snapshot/params?snapshot_name=snapshot1``
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Import Snapshot
+---------------------------------
+
+导入Snapshot
+
+.. code-block:: sh
+
+    POST api/snapshot/utils
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+``operation``            body     string    True      Operation name
+``nodes``                body     node      False     Node params
+``links``                body     link      False     Link params
+``sr_policy``            body     path      False     Path params
+``global_params``        body     params    False     Params params
+=======================  ======== ========= ========= ====================================================
+
+with request like Post ``/api/snapshot/utils?snapshot_name=snapshot1&operation=import``
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P4",
+            "ip": "4.4.4.4",
+            "sid": 60004,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P5",
+            "ip": "5.5.5.5",
+            "sid": 60005,
+            "x_axis": null,
+            "y_axis": null
+        }, {
+            "id": "P6",
+            "ip": "6.6.6.6",
+            "sid": 60006,
+            "x_axis": null,
+            "y_axis": null
+        }],
+        "links": [
+        {
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }
+        ],
+        "sr_policy":[
+        {
+            "id":"SR1",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 20,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Gold",
+            "priority": 2,
+            "path": [["P1", "P1:30012", "P2", "P2:30023", "P3"]],
+            "traffic_flow": 30,
+            "segments": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+            "algorithm": {
+                "algo": 0,
+                "sorter": "metric",
+                "top": 10,
+                "limit": 0,
+                "loose": false
+            }
+        }, {
+            "id":"SR2",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 20,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Silver",
+            "priority": 2,
+            "path": [["P1", "P1:30012", "P2", "P2:30023", "P3"]],
+            "traffic_flow": 15,
+            "segments": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+            "algorithm": {
+                "algo": 1,
+                "sorter": "metric",
+                "top": 10,
+                "limit": 0,
+                "loose": true
+            }
+        }, {
+            "id":"SR5",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 10,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Gold",
+            "priority": 2,
+            "path": [["P1", "P1:30012", "P2", "P2:30023", "P3"]],
+            "traffic_flow": 15,
+            "segments": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+            "algorithm": {
+                "algo": 0,
+                "sorter": "metric",
+                "top": 10,
+                "limit": 0,
+                "loose": false
+            }
+        }
+        ],
+        "global_params": {
+            "algorithm": [
+            {
+                "algo": "1",
+                "sorter": "metric",
+                "top": 10,
+                "limit": 0,
+                "loose": true
+            }, {
+                "algo": "0",
+                "sorter": "metric",
+                "top": 10,
+                "limit": 0,
+                "loose": false
+            }],
+            "global_optimize":{
+                "sorting": "bandwidth_desc",
+                "flow_factor": 1.0,
+                "real_traffic": false,
+                "traffic_ratio": 1.0
+            },
+            "congest_optimize":{
+                "reopt_mode": "loose",
+                "flow_factor": 1.0,
+                "real_traffic": false,
+                "traffic_ratio": 1.0,
+                "congest_threshold": 0.8,
+                "target_threshold": 0.7,
+                "prioriry_prefer": "HIGH",
+                "traffic_prefer": "HIGH",
+                "priority_weight": 0.5,
+                "bandwidth_weight": 0.5
+            }
+        }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }
+
+Export Snapshot
+---------------------------------
+
+导出Snapshot
+
+.. code-block:: sh
+
+    POST api/snapshot/utils
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+``operation``            body     string    True      Operation name
+``with_params``          body     bool      False     Export global_params or not
+
+=======================  ======== ========= ========= ====================================================
+
+with request like Post ``/api/snapshot/utils?snapshot_name=snapshot1&operation=export``
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "with_params": false
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {
+            "nodes": [
+                {
+                    "id": "P1",
+                    "ip": "1.1.1.1",
+                    "sid": 60001,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P2",
+                    "ip": "2.2.2.2",
+                    "sid": 60002,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P3",
+                    "ip": "3.3.3.3",
+                    "sid": 60003,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P4",
+                    "ip": "4.4.4.4",
+                    "sid": 60004,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P5",
+                    "ip": "5.5.5.5",
+                    "sid": 60005,
+                    "x_axis": null,
+                    "y_axis": null
+                },
+                {
+                    "id": "P6",
+                    "ip": "6.6.6.6",
+                    "sid": 60006,
+                    "x_axis": null,
+                    "y_axis": null
+                }
+            ],
+            "links": [
+                {
+                    "affinity": 0,
+                    "remote": "P2",
+                    "sid": 30012,
+                    "local": "P1",
+                    "bandwidth": 100,
+                    "ip": "1.1.1.2",
+                    "te": 10,
+                    "id": "P1:30012",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P3",
+                    "sid": 30023,
+                    "local": "P2",
+                    "bandwidth": 100,
+                    "ip": "2.2.2.3",
+                    "te": 10,
+                    "id": "P2:30023",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P4",
+                    "sid": 30014,
+                    "local": "P1",
+                    "bandwidth": 100,
+                    "ip": "1.1.1.4",
+                    "te": 10,
+                    "id": "P1:30014",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P5",
+                    "sid": 30045,
+                    "local": "P4",
+                    "bandwidth": 100,
+                    "ip": "4.4.4.5",
+                    "te": 10,
+                    "id": "P4:30045",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P6",
+                    "sid": 30046,
+                    "local": "P4",
+                    "bandwidth": 100,
+                    "ip": "4.4.4.6",
+                    "te": 10,
+                    "id": "P4:30046",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P3",
+                    "sid": 30053,
+                    "local": "P5",
+                    "bandwidth": 100,
+                    "ip": "5.5.5.3",
+                    "te": 10,
+                    "id": "P5:30053",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                },
+                {
+                    "affinity": 0,
+                    "remote": "P3",
+                    "sid": 30063,
+                    "local": "P6",
+                    "bandwidth": 100,
+                    "ip": "6.6.6.3",
+                    "te": 10,
+                    "id": "P6:30063",
+                    "delay": 100,
+                    "igp": 10,
+                    "qos_class": [
+                        {
+                            "class": "Gold",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        },
+                        {
+                            "class": "Silver",
+                            "bandwidth_reserve": 50,
+                            "bandwidth_available": 50,
+                            "traffic_flow": 0
+                        }
+                    ]
+                }
+            ],
+            "sr_policy": [
+                {
+                    "id": "SR1",
+                    "headend": "P1",
+                    "tailend": "P3",
+                    "metric": "te",
+                    "bandwidth": 20,
+                    "affinity": "0x0",
+                    "mask": "0x0",
+                    "include": [],
+                    "exclude": [],
+                    "tiebreaker": false,
+                    "disjoint": false,
+                    "segment_list": "60003",
+                    "class": "Gold",
+                    "priority": 2,
+                    "path": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "traffic_flow": 30,
+                    "segments": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "algorithm": {
+                        "algo": 0,
+                        "sorter": "metric",
+                        "top": 10,
+                        "limit": 0,
+                        "loose": false
+                    }
+                },
+                {
+                    "id": "SR2",
+                    "headend": "P1",
+                    "tailend": "P3",
+                    "metric": "te",
+                    "bandwidth": 20,
+                    "affinity": "0x0",
+                    "mask": "0x0",
+                    "include": [],
+                    "exclude": [],
+                    "tiebreaker": false,
+                    "disjoint": false,
+                    "segment_list": "60003",
+                    "class": "Silver",
+                    "priority": 2,
+                    "path": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "traffic_flow": 15,
+                    "segments": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "algorithm": {
+                        "algo": 1,
+                        "sorter": "metric",
+                        "top": 10,
+                        "limit": 0,
+                        "loose": true
+                    }
+                },
+                {
+                    "id": "SR5",
+                    "headend": "P1",
+                    "tailend": "P3",
+                    "metric": "te",
+                    "bandwidth": 10,
+                    "affinity": "0x0",
+                    "mask": "0x0",
+                    "include": [],
+                    "exclude": [],
+                    "tiebreaker": false,
+                    "disjoint": false,
+                    "segment_list": "60003",
+                    "class": "Gold",
+                    "priority": 2,
+                    "path": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "traffic_flow": 15,
+                    "segments": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "algorithm": {
+                        "algo": 0,
+                        "sorter": "metric",
+                        "top": 10,
+                        "limit": 0,
+                        "loose": false
+                    }
+                }
+            ]
+        }
+    }
+
+Delete All Snapshot content
+---------------------------------
+
+删除所有Snapshot相关的信息，包括topo，path，params
+
+.. code-block:: sh
+
+    POST api/snapshot/utils
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``snapshot_name``        path     string    True      Snapshot name
+``operation``            body     string    True      Operation name
+``with_params``          body     bool      False     Export global_params or not
+
+=======================  ======== ========= ========= ====================================================
+
+with request like Post ``/api/snapshot/utils?snapshot_name=snapshot1&operation=delete``
+
+**Request Example**
+
+.. code-block:: json
+
+    {}
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {}
+    }

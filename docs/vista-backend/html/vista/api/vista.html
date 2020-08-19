@@ -1,0 +1,1221 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Vista &mdash; vista 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Bod Policy" href="bod_policy.html" />
+    <link rel="prev" title="RESTful API" href="../restapi.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> vista
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../vista.html">Vista Service</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../restapi.html">RESTful API</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../restapi.html#resources">Resources</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Vista</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#run-vista">Run Vista</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#vista-simple">Vista Simple</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#vista-path">Vista Path</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="bod_policy.html">Bod Policy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nonbod_policy.html">Non-bod Policy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="async_task.html">Asynchronous Task</a></li>
+<li class="toctree-l4"><a class="reference internal" href="snapshot.html">Snapshot Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../restapi.html#status-codes">Status codes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">vista</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../vista.html">Vista Service</a> &raquo;</li>
+        
+          <li><a href="../restapi.html">RESTful API</a> &raquo;</li>
+        
+      <li>Vista</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/vista/api/vista.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="vista">
+<h1>Vista<a class="headerlink" href="#vista" title="Permalink to this headline">¶</a></h1>
+<p>Vista is the short of Visual Intelligence and Speculation of Transport Analysis.</p>
+<div class="section" id="run-vista">
+<h2>Run Vista<a class="headerlink" href="#run-vista" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>POST api/pasta
+</pre></div>
+</div>
+<p>Vista</p>
+<div class="line-block">
+<div class="line">输入拓扑信息（Node，Link）和相关的计算条件，进行计算</div>
+<div class="line">计算后会返回最优的SID List、及其对应的逐跳路径</div>
+<div class="line">SID List压缩符合SR对ECMP的支持，并且尽可能的生成最短的SID List</div>
+</div>
+<p>Tips</p>
+<ul class="simple">
+<li><p>Include和Exclude集合传入Node及Link的ID，请保证ID的唯一性</p></li>
+<li><p>Include是一个有序的集合，其顺序会影响计算结果</p></li>
+</ul>
+<p>字段说明：</p>
+<ul class="simple">
+<li><p>loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10</p></li>
+<li><p>sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽</p></li>
+<li><p>top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果</p></li>
+<li><p>limit: 返回指定sorter满足limit限制的路径，如delay小于1s</p></li>
+<li><p>disjoint: 是否计算保护路径，默认为false，如果置为true，计算基于这次最优方案的node-disjoint路径，如果为空，计算link-disjoint路径</p></li>
+</ul>
+<p><strong>Request</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 7%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nodes</span></code></p></td>
+<td><p>body</p></td>
+<td><p>node</p></td>
+<td><p>True</p></td>
+<td><p>Node list</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">links</span></code></p></td>
+<td><p>body</p></td>
+<td><p>link</p></td>
+<td><p>True</p></td>
+<td><p>Link list</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">headend</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Head-end node</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tailend</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Tail-end node</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metric</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>False</p></td>
+<td><p>Metric (igp, te or latency, default: igp)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bandwidth</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Bandwidth (default: 0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">affinity</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>False</p></td>
+<td><p>Affinity (default: ‘0x0’)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mask</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>False</p></td>
+<td><p>Affinity Mask (default: ‘0x0’)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">include</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>False</p></td>
+<td><p>Include node / link id list (default: [])</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exclude</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>False</p></td>
+<td><p>Exclude node / link id list (default: [])</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sorter</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>False</p></td>
+<td><p>Sort paths by (metric, min_hop or max_min_band, default: metric)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">top</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Return at most top paths</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">limit</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Return paths after limit (equal or less than top).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">loose</span></code></p></td>
+<td><p>body</p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p>Enable loose type (non-spf) or not (default, False)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">disjoint</span></code></p></td>
+<td><p>body</p></td>
+<td><p>bool</p></td>
+<td><p>False</p></td>
+<td><p>Enable disjoint path or not (default: False)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Node</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Node identity</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ip</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Node IP address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sid</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Node SID</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Link</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Link identity</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">local</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Link local node identity</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">remote</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Link remote node identity</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ip</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Link IP address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sid</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Link SID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">igp</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Link IGP metric (default: 0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">te</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Link TE metric (default: 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">delay</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Link DELAY metric (default: 1000)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bandwidth</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Link bandwidth (default: 0)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">affinity</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>False</p></td>
+<td><p>Link affinity (default: 0)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Node Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60001</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Link Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:300012&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.2&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30012</span><span class="p">,</span>
+    <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Request Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60001</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60002</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;3.3.3.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60003</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;4.4.4.4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60004</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;5.5.5.5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60005</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;6.6.6.6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60006</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;links&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30012</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30023&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30014&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">10</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P4:30045&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;4.4.4.5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30045&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">10</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P4:30046&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;4.4.4.6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30046&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;5.5.5.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30053&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+    <span class="p">},</span>  <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P6:30063&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;6.6.6.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30063&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;headend&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;tailend&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;metric&quot;</span><span class="p">:</span> <span class="s2">&quot;igp&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="s2">&quot;0x0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;mask&quot;</span><span class="p">:</span> <span class="s2">&quot;0x0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="nt">&quot;include&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;P5&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;exclude&quot;</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="nt">&quot;sorter&quot;</span><span class="p">:</span> <span class="s2">&quot;metric&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;top&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="nt">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="nt">&quot;loose&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;disjoint&quot;</span><span class="p">:</span> <span class="kc">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response paramters in data json</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sids</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Best SID List after encode</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">paths</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Best hop-by-hop paths</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">segs</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Best paths include segs info</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">attr</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Best paths detail info</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">other</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Other choices</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">d_sids</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Disjoint SID List for best paths</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">d_paths</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Disjoint hop-by-hop paths</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">d_segs</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Disjoint paths include segs info</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">d_attr</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Disjoint paths detail info</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">d_other</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Other choices</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p>body</p></td>
+<td><p>float</p></td>
+<td><p>Time consumed (ms)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;sids&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;5.5.5.5&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60005</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;lo&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;re&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+                <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mf">1000.0</span><span class="p">,</span>
+                <span class="nt">&quot;bd&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                <span class="nt">&quot;affi&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;5.5.5.3&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30053</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;3.3.3.3&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60003</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;paths&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P4:30045&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;P3&quot;</span>
+            <span class="p">]</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;segs&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P4:30045&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P5&quot;</span>
+                <span class="p">]</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P3&quot;</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;attr&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+            <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
+            <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mf">1020.0</span><span class="p">,</span>
+            <span class="nt">&quot;min_hop&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="nt">&quot;max_min_band&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;other&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mf">0.2</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vista-simple">
+<h2>Vista Simple<a class="headerlink" href="#vista-simple" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>POST api/pasta/simple
+</pre></div>
+</div>
+<p><strong>Request</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nodes</span></code></p></td>
+<td><p>body</p></td>
+<td><p>node</p></td>
+<td><p>True</p></td>
+<td><p>Node list</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">links</span></code></p></td>
+<td><p>body</p></td>
+<td><p>link</p></td>
+<td><p>True</p></td>
+<td><p>Link list</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">headend</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Head-end node</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tailend</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>True</p></td>
+<td><p>Tail-end node</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60001</span>
+    <span class="p">},{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60002</span>
+    <span class="p">},{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;3.3.3.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60003</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;links&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30012</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30023</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;headend&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;tailend&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response paramters in data json</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">paths</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Shortest Path(s) list</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p>body</p></td>
+<td><p>string</p></td>
+<td><p>Time consumed (ms)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="nt">&quot;data&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;paths&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span> <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span> <span class="s2">&quot;P3&quot;</span><span class="p">]],</span>
+        <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mf">0.04</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vista-path">
+<h2>Vista Path<a class="headerlink" href="#vista-path" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>POST api/pasta/path
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">指定SID List还原路径</div>
+</div>
+<p><strong>Request</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 8%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nodes</span></code></p></td>
+<td><p>body</p></td>
+<td><p>node</p></td>
+<td><p>True</p></td>
+<td><p>Node list</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">links</span></code></p></td>
+<td><p>body</p></td>
+<td><p>link</p></td>
+<td><p>True</p></td>
+<td><p>Link list</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sids</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>False</p></td>
+<td><p>SID List (default: [])</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sids_list</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>False</p></td>
+<td><p>Multiple SID List (default: [])</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Request Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60001</span>
+    <span class="p">},{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60002</span>
+    <span class="p">},{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;3.3.3.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60003</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;links&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30012</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30023</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;delay&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;sids&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P3&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Response paramters in data json</strong></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 9%" />
+<col style="width: 10%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>In</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">paths</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Shortest Path(s) list</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">segs</span></code></p></td>
+<td><p>body</p></td>
+<td><p>list</p></td>
+<td><p>Shortest Path(s) include segs info list</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p>body</p></td>
+<td><p>integer</p></td>
+<td><p>Time consumed (ms)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response Example</strong></p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60001</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60002</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;3.3.3.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60003</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;4.4.4.4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60004</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;5.5.5.5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60005</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;6.6.6.6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">60006</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;links&quot;</span><span class="p">:</span> <span class="p">[{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="mi">30012</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;2.2.2.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30023&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.1.4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30014&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P4:30045&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;4.4.4.5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30045&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P4:30046&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;4.4.4.6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30046&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span> <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;5.5.5.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30053&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">},</span>  <span class="p">{</span>
+        <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;P6:30063&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;remote&quot;</span><span class="p">:</span> <span class="s2">&quot;P3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;ip&quot;</span><span class="p">:</span> <span class="s2">&quot;6.6.6.3&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;30063&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;igp&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;te&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+        <span class="nt">&quot;bandwidth&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="nt">&quot;affinity&quot;</span><span class="p">:</span> <span class="mi">0</span>
+    <span class="p">}],</span>
+    <span class="nt">&quot;sids_list&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P4&quot;</span><span class="p">,</span> <span class="s2">&quot;P3&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;P1&quot;</span><span class="p">,</span> <span class="s2">&quot;P3&quot;</span><span class="p">]]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果传入多个SID List， “sids_list”: [[“P1”, “P3”], [“P1”, “P4”, “P3”]], 则返回每个SID List的还原路径</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;status&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;info&quot;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="nt">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;paths&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P4:30045&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P3&quot;</span>
+                <span class="p">],</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P4:30046&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P6:30063&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P3&quot;</span>
+                <span class="p">]</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;P3&quot;</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;segs&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P1:30014&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P4&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">],</span>
+                <span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P4:30045&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P5&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P5:30053&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P3&quot;</span>
+                    <span class="p">],</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;P4&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P4:30046&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P6&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P6:30063&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P3&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">],</span>
+            <span class="p">[</span>
+                <span class="p">[</span>
+                    <span class="p">[</span>
+                        <span class="s2">&quot;P1&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P1:30012&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P2&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P2:30023&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;P3&quot;</span>
+                    <span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">]</span>
+        <span class="p">],</span>
+        <span class="nt">&quot;time&quot;</span><span class="p">:</span> <span class="mf">0.19</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bod_policy.html" class="btn btn-neutral float-right" title="Bod Policy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../restapi.html" class="btn btn-neutral float-left" title="RESTful API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2019, Cisco Systems
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

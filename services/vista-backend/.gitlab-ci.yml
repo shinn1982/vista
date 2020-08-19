@@ -1,0 +1,70 @@
+variables:
+  GIT_SSL_NO_VERIFY: "1"
+
+stages:
+  - test
+  - build
+  - deploy
+
+pep8:
+  stage: test
+  image: python:3.6
+  script:
+    - export HTTPS_PROXY=$HTTPS_PROXY
+    - pip install tox
+    - tox -e pep8 -c ./tox.ini
+  tags:
+    - python3.6
+  except:
+    - master@yare/vista-backend
+
+unittest-py36:
+  stage: test
+  image: python:3.6
+  script:
+    - export HTTPS_PROXY=$HTTPS_PROXY
+    - pip install tox
+    - tox -e py36 -c ./tox.ini
+  tags:
+    - python3.6
+  except:
+    - master@yare/vista-backend
+
+build-vista-image:
+  stage: build
+  tags:
+    - shell
+  script:
+    - docker build -t containers.cisco.com/vista-backend:lastest -f ./Dockerfile.test .
+  only:
+    - master@yare/vista-backend
+  when: manual
+
+docker-vista-test-deploy:
+  stage: deploy
+  tags:
+    - shell
+  script:
+    - docker build --build-arg HTTP_PROXY=http://proxy-wsa.esl.cisco.com:80 --build-arg HTTPS_PROXY=http://proxy-wsa.esl.cisco.com:80 -t containers.cisco.com/vista-backend:latest -f ./Dockerfile.test .
+    - if [ $(docker ps -aq --filter name=vista-backend) ]; then docker rm -f vista-backend;fi
+    - if [ $(docker ps -aq --filter name=celery-vista-backend) ]; then docker rm -f celery-vista-backend;fi
+    - docker system prune  -f
+    - docker run -d --restart always --name vista-backend -v /home/control/yare-core-log/vista-backend/:/home/control/yare-core-log/vista-backend/ -v /etc/localtime:/etc/localtime:ro -e config_file=vista_backend_test.yaml -p 8000:8000 --log-opt mode=non-blocking --log-opt max-buffer-size=10m containers.cisco.com/vista-backend:latest gunicorn --bind=0.0.0.0:8000 cxpasta.wsgi:application
+    - docker run -d --restart always --name celery-vista-backend -v /home/control/yare-core-log/vista-backend/:/home/control/yare-core-log/vista-backend/ -v /etc/localtime:/etc/localtime:ro -v /etc/timezone:/etc/timezone:ro -e config_file=vista_backend_test.yaml --log-opt mode=non-blocking --log-opt max-buffer-size=10m --log-opt max-file=5 vista-backend-local:latest celery -A cxpasta.celeryapp worker -l info
+  only:
+    - master@yare/vista-backend
+
+docker-vista-deploy:
+  stage: deploy
+  tags:
+    - shell
+  script:
+    - docker build -t containers.cisco.com/vista-backend:latest -f ./Dockerfile .
+    - if [ $(docker ps -aq --filter name=vista-backend) ]; then docker rm -f vista-backend;fi
+    - if [ $(docker ps -aq --filter name=celery-vista-backend) ]; then docker rm -f celery-vista-backend;fi
+    - docker system prune  -f
+    - docker run -d --restart always --name vista-backend -v /home/control/yare-core-log/vista-backend/:/home/control/yare-core-log/vista-backend/ -v /etc/localtime:/etc/localtime:ro -e config_file=vista_backend_test.yaml -p 8000:8000 --log-opt mode=non-blocking --log-opt max-buffer-size=10m containers.cisco.com/vista-backend:latest gunicorn --bind=0.0.0.0:8000 cxpasta.wsgi:application
+    - docker run -d --restart always --name celery-vista-backend -v /home/control/yare-core-log/vista-backend/:/home/control/yare-core-log/vista-backend/ -v /etc/localtime:/etc/localtime:ro -v /etc/timezone:/etc/timezone:ro -e config_file=vista_backend_test.yaml --log-opt mode=non-blocking --log-opt max-buffer-size=10m --log-opt max-file=5 vista-backend-local:latest celery -A cxpasta.celeryapp worker -l info
+  only:
+    - master@yare/vista-backend
+  when: manual

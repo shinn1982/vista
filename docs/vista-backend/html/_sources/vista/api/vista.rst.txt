@@ -1,0 +1,667 @@
+Vista
+===========
+
+Vista is the short of Visual Intelligence and Speculation of Transport Analysis.
+
+
+Run Vista
+--------------
+
+.. code-block:: sh
+
+    POST api/pasta
+
+Vista
+
+| 输入拓扑信息（Node，Link）和相关的计算条件，进行计算
+| 计算后会返回最优的SID List、及其对应的逐跳路径
+| SID List压缩符合SR对ECMP的支持，并且尽可能的生成最短的SID List
+
+Tips
+
+- Include和Exclude集合传入Node及Link的ID，请保证ID的唯一性
+- Include是一个有序的集合，其顺序会影响计算结果
+
+字段说明：
+
+- loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10
+- sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽
+- top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果
+- limit: 返回指定sorter满足limit限制的路径，如delay小于1s
+- disjoint: 是否计算保护路径，默认为false，如果置为true，计算基于这次最优方案的node-disjoint路径，如果为空，计算link-disjoint路径
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``ip``                   body     string    True      Node IP address
+``sid``                  body     integer   False     Node SID
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   False     Link SID
+``igp``                  body     integer   False     Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1",
+        "ip": "1.1.1.1",
+        "sid": 60001
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1:300012",
+        "local": "P1",
+        "remote": "P2",
+        "ip": "1.1.1.2",
+        "sid": 30012,
+        "igp": 10,
+        "te": 10,
+        "delay": 1000,
+        "bandwidth": 100,
+        "affinity": 0
+    }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1", 
+            "ip": "1.1.1.1",
+            "sid": 60001
+        }, {
+            "id": "P2", 
+            "ip": "2.2.2.2",
+            "sid": 60002
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }, {
+            "id": "P4", 
+            "ip": "4.4.4.4",
+            "sid": 60004
+        }, {
+            "id": "P5", 
+            "ip": "5.5.5.5",
+            "sid": 60005
+        }, {
+            "id": "P6", 
+            "ip": "6.6.6.6",
+            "sid": 60006
+        }],
+        "links": [{
+            "id": "P1:30012", 
+            "local": "P1",
+            "remote": "P2",
+            "ip": "1.1.1.2",
+            "sid": 30012,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0,
+            "delay": 1000
+        }, {
+            "id": "P2:30023",
+            "local": "P2",
+            "remote": "P3",
+            "ip": "2.2.2.3",
+            "sid": "30023",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0,
+            "delay": 1000
+        }, {
+            "id": "P1:30014",
+            "local": "P1",
+            "remote": "P4",
+            "ip": "1.1.1.4",
+            "sid": "30014",
+            "igp": 10,
+            "te": 1,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "delay": 10
+        }, {
+            "id": "P4:30045", 
+            "local": "P4",
+            "remote": "P5",
+            "ip": "4.4.4.5",
+            "sid": "30045",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "delay": 10
+        }, {
+            "id": "P4:30046", 
+            "local": "P4",
+            "remote": "P6",
+            "ip": "4.4.4.6",
+            "sid": "30046",
+            "igp": 10,
+            "te": 1,
+            "bandwidth": 100,
+            "affinity": 0,
+            "delay": 1000
+        }, {
+            "id": "P5:30053",
+            "local": "P5",
+            "remote": "P3",
+            "ip": "5.5.5.3",
+            "sid": "30053",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "delay": 1000
+        },  {
+            "id": "P6:30063",
+            "local": "P6",
+            "remote": "P3",
+            "ip": "6.6.6.3",
+            "sid": "30063",
+            "igp": 10,
+            "te": 1,
+            "bandwidth": 100,
+            "affinity": 0,
+            "delay": 1000
+        }],
+        "headend": "P1",
+        "tailend": "P3",
+        "metric": "igp",
+        "affinity": "0x0",
+        "mask": "0x0",
+        "bandwidth": 100,
+        "include": ["P5"],
+        "exclude": [],
+        "sorter": "metric",
+        "top": 10,
+        "limit": 0,
+        "loose": true,
+        "disjoint": false
+    }
+
+**Response paramters in data json**
+
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {
+            "sids": [
+                {
+                    "id": "P5",
+                    "ip": "5.5.5.5",
+                    "sid": 60005
+                },
+                {
+                    "id": "P5:30053",
+                    "lo": "P5",
+                    "re": "P3",
+                    "igp": 10,
+                    "te": 10,
+                    "delay": 1000.0,
+                    "bd": 1000,
+                    "affi": 0,
+                    "ip": "5.5.5.3",
+                    "sid": 30053
+                },
+                {
+                    "id": "P3",
+                    "ip": "3.3.3.3",
+                    "sid": 60003
+                }
+            ],
+            "paths": [
+                [
+                    "P1",
+                    "P1:30014",
+                    "P4",
+                    "P4:30045",
+                    "P5",
+                    "P5:30053",
+                    "P3"
+                ]
+            ],
+            "segs": [
+                [
+                    [
+                        "P1",
+                        "P1:30014",
+                        "P4",
+                        "P4:30045",
+                        "P5"
+                    ]
+                ],
+                [
+                    [
+                        "P5",
+                        "P5:30053",
+                        "P3"
+                    ]
+                ]
+            ],
+            "attr": {
+                "igp": 30,
+                "te": 21,
+                "delay": 1020.0,
+                "min_hop": 3,
+                "max_min_band": 1000
+            },
+            "other": [],
+            "time": 0.2
+        }
+    }
+
+
+Vista Simple
+--------------
+
+.. code-block:: sh
+
+    POST api/pasta/simple
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+=======================  ======== ========= ========= ====================================================
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001
+        },{
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002
+        },{
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }],
+        "links": [{
+            "id": "P1:30012",
+            "local": "P1",
+            "remote": "P2",
+            "ip": "1.1.1.2",
+            "sid": 30012,
+            "igp": 10,
+            "te": 10,
+            "delay": 1000,
+            "bandwidth": 100,
+            "affinity": 0
+        },{
+            "id": "P2:30023",
+            "local": "P2",
+            "remote": "P3",
+            "ip": "2.2.2.3",
+            "sid": 30023,
+            "igp": 10,
+            "te": 10,
+            "delay": 1000,
+            "bandwidth": 100,
+            "affinity": 0
+        }],
+        "headend": "P1",
+        "tailend": "P3"
+    }
+
+**Response paramters in data json**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``paths``                body     list      Shortest Path(s) list
+``time``                 body     string    Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "info": {},
+        "data" : {
+            "paths": [["P1", "P1:30012", "P2", "P2:30023", "P3"]],
+            "time": 0.04
+        }
+    }
+
+
+Vista Path
+--------------
+
+.. code-block:: sh
+
+    POST api/pasta/path
+
+| 指定SID List还原路径
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``sids``                 body     list      False     SID List (default: [])
+``sids_list``            body     list      False     Multiple SID List (default: [])
+=======================  ======== ========= ========= ====================================================
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001
+        },{
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002
+        },{
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }],
+        "links": [{
+            "id": "P1:30012",
+            "local": "P1",
+            "remote": "P2",
+            "ip": "1.1.1.2",
+            "sid": 30012,
+            "igp": 10,
+            "te": 10,
+            "delay": 1000,
+            "bandwidth": 100,
+            "affinity": 0
+        },{
+            "id": "P2:30023",
+            "local": "P2",
+            "remote": "P3",
+            "ip": "2.2.2.3",
+            "sid": 30023,
+            "igp": 10,
+            "te": 10,
+            "delay": 1000,
+            "bandwidth": 100,
+            "affinity": 0
+        }],
+        "sids": ["P1", "P3"]
+    }
+
+**Response paramters in data json**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``paths``                body     list      Shortest Path(s) list
+``segs``                 body     list      Shortest Path(s) include segs info list
+``time``                 body     integer   Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1", 
+            "ip": "1.1.1.1",
+            "sid": 60001
+        }, {
+            "id": "P2", 
+            "ip": "2.2.2.2",
+            "sid": 60002
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }, {
+            "id": "P4", 
+            "ip": "4.4.4.4",
+            "sid": 60004
+        }, {
+            "id": "P5", 
+            "ip": "5.5.5.5",
+            "sid": 60005
+        }, {
+            "id": "P6", 
+            "ip": "6.6.6.6",
+            "sid": 60006
+        }],
+        "links": [{
+            "id": "P1:30012", 
+            "local": "P1",
+            "remote": "P2",
+            "ip": "1.1.1.2",
+            "sid": 30012,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        }, {
+            "id": "P2:30023",
+            "local": "P2",
+            "remote": "P3",
+            "ip": "2.2.2.3",
+            "sid": "30023",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        }, {
+            "id": "P1:30014",
+            "local": "P1",
+            "remote": "P4",
+            "ip": "1.1.1.4",
+            "sid": "30014",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        }, {
+            "id": "P4:30045", 
+            "local": "P4",
+            "remote": "P5",
+            "ip": "4.4.4.5",
+            "sid": "30045",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        }, {
+            "id": "P4:30046", 
+            "local": "P4",
+            "remote": "P6",
+            "ip": "4.4.4.6",
+            "sid": "30046",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        }, {
+            "id": "P5:30053",
+            "local": "P5",
+            "remote": "P3",
+            "ip": "5.5.5.3",
+            "sid": "30053",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        },  {
+            "id": "P6:30063",
+            "local": "P6",
+            "remote": "P3",
+            "ip": "6.6.6.3",
+            "sid": "30063",
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 100,
+            "affinity": 0
+        }],
+        "sids_list": [["P1", "P4", "P3"], ["P1", "P3"]]
+    }
+
+如果传入多个SID List， "sids_list": [["P1", "P3"], ["P1", "P4", "P3"]], 则返回每个SID List的还原路径
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": {
+            "paths": [
+                [
+                    [
+                        "P1",
+                        "P1:30014",
+                        "P4",
+                        "P4:30045",
+                        "P5",
+                        "P5:30053",
+                        "P3"
+                    ],
+                    [
+                        "P1",
+                        "P1:30014",
+                        "P4",
+                        "P4:30046",
+                        "P6",
+                        "P6:30063",
+                        "P3"
+                    ]
+                ],
+                [
+                    [
+                        "P1",
+                        "P1:30012",
+                        "P2",
+                        "P2:30023",
+                        "P3"
+                    ]
+                ]
+            ],
+            "segs": [
+                [
+                    [
+                        [
+                            "P1",
+                            "P1:30014",
+                            "P4"
+                        ]
+                    ],
+                    [
+                        [
+                            "P4",
+                            "P4:30045",
+                            "P5",
+                            "P5:30053",
+                            "P3"
+                        ],
+                        [
+                            "P4",
+                            "P4:30046",
+                            "P6",
+                            "P6:30063",
+                            "P3"
+                        ]
+                    ]
+                ],
+                [
+                    [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ]
+                ]
+            ],
+            "time": 0.19
+        }
+    }

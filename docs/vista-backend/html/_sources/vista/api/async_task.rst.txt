@@ -1,0 +1,227 @@
+Asynchronous Task
+=======================
+
+Asynchronous Task状态查询，执行结果返回
+
+Tips
+
+- 调用异步计算接口后，会返回异步任务的task_id
+- 通过轮询的方式，查询task_id的执行状态，如果执行成功返回计算结果，如果执行失败返回失败原因
+
+Get Job Status
+---------------------------------
+
+查询异步任务的执行状态，并返回结果或异常信息
+
+.. code-block:: sh
+
+    GET api/job/check_status?{task_id}{type}
+
+根据task_id，type查询任务的状态
+
+字段说明:
+
+- task_id: 异步任务的id，通过调用异步计算接口得到
+- type: 异步任务的类别，包括bod_pasta, nonbod_pasta, bod_modified, bod_reopt, nonbod_reopt, bod_congest_reopt
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``task_id``              path     string    True      Async task identifier
+``type``                 path     string    True      type of async task call
+=======================  ======== ========= ========= ====================================================
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Task detail information
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+``task_status``          body     string    Async task status (PENDING, SUCCESS, FAILURE)
+``info``                 body     string    Detail information to describe task status
+``data``                 body     string    Return value when task executed successfully
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": [],
+        "data": {
+            "task_id": "90bce047-3a99-4c84-af3a-73b48e296724",
+            "task_state": "SUCCESS",
+            "info": [],
+            "data": {
+                "info": {},
+                "data": [
+                    {
+                        "algo_type": 0,
+                        "status": true,
+                        "info": {},
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30012",
+                                    "P2",
+                                    "P2:30023",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30012",
+                                        "P2",
+                                        "P2:30023",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 20,
+                                "te": 20,
+                                "delay": 200.0,
+                                "min_hop": 2,
+                                "max_min_band": 10.0
+                            },
+                            "other": [],
+                            "time": 0.53
+                        }
+                    },
+                    {
+                        "algo_type": 1,
+                        "status": true,
+                        "info": {},
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30045",
+                                    "P5",
+                                    "P5:30053",
+                                    "P3"
+                                ],
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30045",
+                                        "P5",
+                                        "P5:30053",
+                                        "P3"
+                                    ],
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 30
+                            },
+                            "other": [
+                                {
+                                    "sids": [
+                                        {
+                                            "id": "P3",
+                                            "ip": "3.3.3.3",
+                                            "sid": 60003
+                                        }
+                                    ],
+                                    "paths": [
+                                        [
+                                            "P1",
+                                            "P1:30012",
+                                            "P2",
+                                            "P2:30023",
+                                            "P3"
+                                        ]
+                                    ],
+                                    "segs": [
+                                        [
+                                            [
+                                                "P1",
+                                                "P1:30012",
+                                                "P2",
+                                                "P2:30023",
+                                                "P3"
+                                            ]
+                                        ]
+                                    ],
+                                    "attr": {
+                                        "igp": 20,
+                                        "te": 20,
+                                        "delay": 200.0,
+                                        "min_hop": 2,
+                                        "max_min_band": 10.0
+                                    }
+                                }
+                            ],
+                            "time": 0.78
+                        }
+                    }
+                ]
+            }
+        }
+    }

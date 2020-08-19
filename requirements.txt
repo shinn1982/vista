@@ -1,0 +1,2 @@
+-r cxcomm/requirements.txt
+-r services/vista-backend/requirements.txt

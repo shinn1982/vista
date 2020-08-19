@@ -1,0 +1,21 @@
+.. vista-server documentation master file, created by
+   sphinx-quickstart on Thu Mar 29 10:42:08 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Visual Intelligence and Speculation of Traffic Analysis
+=======================================================
+
+智能流量路径分析与规划引擎v2.0文档，本文档包含VISTA后台REST API的详细介绍。
+
+.. toctree::
+   :maxdepth: 6
+
+   vista
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

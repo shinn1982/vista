@@ -1,0 +1,4531 @@
+Bod Policy
+=======================
+
+Policy with bandwidth on demand.
+
+
+Tips
+
+- Include和Exclude集合传入Node及Link的ID，请保证ID的唯一性
+- Include是一个有序的集合，其顺序会影响的计算结果
+
+字段说明：
+
+- loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10
+- sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽
+- top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果
+- limit: 返回指定sorter满足limit限制的路径，如delay小于1s
+- disjoint: 是否计算保护路径，默认为false，如果置为true，计算基于这次最优方案的node-disjoint路径，如果为空，计算link-disjoint路径
+
+Synchronous Create BoD Policy
+-----------------------------
+
+创建BoD SR Policy的同步调用接口
+
+.. code-block:: sh
+
+    POST api/pasta/bod_pasta
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``sr_policy``            body     sr_policy True      SR policy information
+``global``               body     global    True      Global setting information
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``ip``                   body     string    True      Node IP address
+``sid``                  body     integer   False     Node SID
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   False     Link SID
+``igp``                  body     integer   False     Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``qos_class``            body     qos_class False     Qos class info
+=======================  ======== ========= ========= ====================================================
+
+**qos_class**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``class``                body     string    True      Qos class name
+``bandwidth_reserve``    body     integer   True      Class bandwidth reservation
+``bandwidth_available``  body     integer   True      Class bandwidth available
+``traffic_flow``         body     integer   True      Class traffic flow
+=======================  ======== ========= ========= ====================================================
+
+**sr_policy**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``reopt_enable``         body     bool      False     Enable re-optimization or not (default: True)
+``class``                body     string    False     Class name
+``priority``             body     integer   False     Re-optimization priority
+=======================  ======== ========= ========= ====================================================
+
+**global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algorithm``            body     algorithm True      Algorithm list
+``flow_factor``          body     float     True      Flow weight of ecmp paths
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1",
+        "ip": "1.1.1.1",
+        "sid": 60001
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "affinity": 0,
+        "remote": "P2",
+        "sid": 30012,
+        "local": "P1",
+        "bandwidth": 100,
+        "ip": "1.1.1.2",
+        "te": 10,
+        "id": "P1:30012",
+        "delay": 100,
+        "igp": 10,
+        "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+            }
+        ]
+    }
+
+**Sr_policy Example**
+
+.. code-block:: json
+
+    {
+		"headend": "P1",
+		"tailend": "P3",
+		"metric": "igp",
+		"bandwidth": 30,
+		"affinity": "0x0",
+		"mask": "0x0",
+		"include": [],
+		"exclude": [],
+		"tiebreaker": false,
+		"disjoint": true,
+		"reopt_enable": true,
+		"class": "Gold",
+		"priority": 1
+	}
+
+**Global Example**
+
+.. code-block:: json
+
+    {
+        "algorithm": [{
+          "algo": 0
+        },{
+          "algo": 1,
+          "sorter": "metric",
+          "top": 10,
+          "limit": 0,
+          "loose": true
+        }],
+        "flow_factor": 1.0,
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+      }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001
+        }, {
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }, {
+            "id": "P4",
+            "ip": "4.4.4.4",
+            "sid": 60004
+        }, {
+            "id": "P5",
+            "ip": "5.5.5.5",
+            "sid": 60005
+        }, {
+            "id": "P6",
+            "ip": "6.6.6.6",
+            "sid": 60006
+        }],
+      "links": [
+        {
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ]
+        }],
+      "sr_policy":{
+        "headend": "P1",
+        "tailend": "P3",
+        "metric": "igp",
+        "bandwidth": 30,
+        "affinity": "0x0",
+        "mask": "0x0",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": true,
+        "reopt_enable": true,
+        "class":"Gold",
+        "priority": 1
+      },
+      "global":{
+        "algorithm": [{
+          "algo": 0
+        }],
+        "flow_factor": 1.0,
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+      }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``algo_type``            body     integer   Algorithm type: 0=SPF ; 1 = Non SPF
+``status``               body     bool      Success or not
+``info``                 body     dic       Error info
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "algo_type": 0,
+                "status": true,
+                "info": {},
+                "data": {
+                    "sids": [
+                        {
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "paths": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "attr": {
+                        "igp": 20,
+                        "te": 20,
+                        "delay": 200.0,
+                        "min_hop": 2,
+                        "max_min_band": 50
+                    },
+                    "other": [],
+                    "d_sids": [
+                        {
+                            "id": "P4",
+                            "ip": "4.4.4.4",
+                            "sid": 60004
+                        },
+                        {
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "d_paths": [
+                        [
+                            "P1",
+                            "P1:30014",
+                            "P4",
+                            "P4:30045",
+                            "P5",
+                            "P5:30053",
+                            "P3"
+                        ],
+                        [
+                            "P1",
+                            "P1:30014",
+                            "P4",
+                            "P4:30046",
+                            "P6",
+                            "P6:30063",
+                            "P3"
+                        ]
+                    ],
+                    "d_other": [],
+                    "d_segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30014",
+                                "P4"
+                            ]
+                        ],
+                        [
+                            [
+                                "P4",
+                                "P4:30045",
+                                "P5",
+                                "P5:30053",
+                                "P3"
+                            ],
+                            [
+                                "P4",
+                                "P4:30046",
+                                "P6",
+                                "P6:30063",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "d_attr": {
+                        "igp": 30,
+                        "te": 30,
+                        "delay": 300.0,
+                        "min_hop": 3,
+                        "max_min_band": 50
+                    },
+                    "time": 0.34
+                }
+            }
+        ]
+    }
+
+
+Asynchronous Create Bod Policy
+------------------------------
+
+创建BoD SR Policy的异步调用接口
+
+.. code-block:: sh
+
+    POST api/pasta/async_bod_pasta
+
+**Request**
+
+与同步接口的请求格式相同，具体请参见Synchronous Create Bod Policy部分的内容。
+
+**Response paramters in data list**
+
+异步调用接口会以task_id为返回值，task_id是异步任务的id，通过异步任务查询接口可以获得任务的执行状态，具体请参见vista/api/async_task部分
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "task_id": "af2b62e3-9c05-4ae9-93c5-59073750bc67"
+            }
+        ]
+    }
+
+
+Synchronous Update Bod Policy
+-----------------------------
+
+变更BoD SR Policy的同步调用接口
+
+.. code-block:: sh
+
+    PUT api/pasta/bod_pasta
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``sr_policy``            body     sr_policy True      SR policy information
+``global``               body     global    True      Global setting information
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``ip``                   body     string    True      Node IP address
+``sid``                  body     integer   False     Node SID
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   False     Link SID
+``igp``                  body     integer   False     Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``qos_class``            body     qos_class False     Qos class info
+=======================  ======== ========= ========= ====================================================
+
+**qos_class**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``class``                body     string    True      Qos class name
+``bandwidth_reserve``    body     integer   True      Class bandwidth reservation
+``bandwidth_available``  body     integer   True      Class bandwidth available
+``traffic_flow``         body     integer   True      Class traffic flow
+=======================  ======== ========= ========= ====================================================
+
+**sr_policy**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      SR policy ID
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``class``                body     string    False     Class name
+``priority``             body     integer   False     Re-optimization priority
+``former``               body     former    False     SR policy raw info
+=======================  ======== ========= ========= ====================================================
+
+**former**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``class``                body     string    False     Class name
+``segment_list``         body     string    False     Raw segment list
+``path``                 body     list      False     Raw path
+=======================  ======== ========= ========= ====================================================
+
+**global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algorithm``            body     algorithm True      Algorithm list
+``flow_factor``          body     float     True      Flow weight of ecmp paths
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1",
+        "ip": "1.1.1.1",
+        "sid": 60001
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "affinity": 0,
+        "remote": "P2",
+        "sid": 30012,
+        "local": "P1",
+        "bandwidth": 100,
+        "ip": "1.1.1.2",
+        "te": 10,
+        "id": "P1:30012",
+        "delay": 100,
+        "igp": 10,
+        "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+            }
+        ]
+    }
+
+**Sr_policy Example**
+
+.. code-block:: json
+
+    {
+		"id": "SR4",
+		"former": {
+			"headend": "P1",
+			"tailend": "P3",
+			"metric": "te",
+			"bandwidth": 5,
+			"affinity": "0x0",
+			"mask": "0x0",
+			"include": [],
+			"exclude": [],
+			"tiebreaker": false,
+			"disjoint": false,
+			"class": "Gold",
+			"priority": 1,
+			"segment_list": "60003",
+			"path": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]]
+		},
+		"headend": "P1",
+		"tailend": "P3",
+		"metric": "te",
+		"bandwidth": 10,
+		"affinity": "0x0",
+		"mask": "0x0",
+		"include": [],
+		"exclude": [],
+		"tiebreaker": false,
+		"disjoint": false,
+		"class": "Gold",
+		"priority": 1
+	}
+
+**Global Example**
+
+.. code-block:: json
+
+    {
+        "algorithm": [{
+          "algo": 0
+        },{
+          "algo": 1,
+          "sorter": "metric",
+          "top": 10,
+          "limit": 0,
+          "loose": true
+        }],
+        "flow_factor": 1.0,
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+      }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+      "nodes": [{
+            "id": "P1",
+            "ip": "1.1.1.1",
+            "sid": 60001
+        }, {
+            "id": "P2",
+            "ip": "2.2.2.2",
+            "sid": 60002
+        }, {
+            "id": "P3",
+            "ip": "3.3.3.3",
+            "sid": 60003
+        }, {
+            "id": "P4",
+            "ip": "4.4.4.4",
+            "sid": 60004
+        }, {
+            "id": "P5",
+            "ip": "5.5.5.5",
+            "sid": 60005
+        }, {
+            "id": "P6",
+            "ip": "6.6.6.6",
+            "sid": 60006
+        }],
+      "links": [{
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 5,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 5,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 30,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 30,
+                "traffic_flow": 0
+                }
+            ]
+        }],
+      "sr_policy":{
+        "id":"SR4",
+        "former": {
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 5,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "class":"Gold",
+            "priority": 1,
+            "segment_list": "60003",
+            "path": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]]
+        },
+        "headend": "P1",
+        "tailend": "P3",
+        "metric": "te",
+        "bandwidth": 10,
+        "affinity": "0x0",
+        "mask": "0x0",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": false,
+        "class":"Gold",
+        "priority": 1
+      },
+      "global":{
+        "algorithm": [{
+          "algo": 0
+        },{
+          "algo": 1,
+          "sorter": "max_min_band",
+          "top": 10,
+          "limit": 0,
+          "loose": true
+        }
+        ],
+        "flow_factor": 1.0,
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+      }
+    }
+
+**Response paramters in data list**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``algo_type``            body     integer   Algorithm type: 0=SPF ; 1 = Non SPF
+``status``               body     bool      Success or not
+``info``                 body     dic       Error info
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "algo_type": 0,
+                "status": true,
+                "info": {},
+                "data": {
+                    "sids": [
+                        {
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "paths": [
+                        [
+                            "P1",
+                            "P1:30012",
+                            "P2",
+                            "P2:30023",
+                            "P3"
+                        ]
+                    ],
+                    "segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30012",
+                                "P2",
+                                "P2:30023",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "attr": {
+                        "igp": 20,
+                        "te": 20,
+                        "delay": 200.0,
+                        "min_hop": 2,
+                        "max_min_band": 50
+                    },
+                    "other": [],
+                    "d_sids": [
+                        {
+                            "id": "P4",
+                            "ip": "4.4.4.4",
+                            "sid": 60004
+                        },
+                        {
+                            "id": "P3",
+                            "ip": "3.3.3.3",
+                            "sid": 60003
+                        }
+                    ],
+                    "d_paths": [
+                        [
+                            "P1",
+                            "P1:30014",
+                            "P4",
+                            "P4:30045",
+                            "P5",
+                            "P5:30053",
+                            "P3"
+                        ],
+                        [
+                            "P1",
+                            "P1:30014",
+                            "P4",
+                            "P4:30046",
+                            "P6",
+                            "P6:30063",
+                            "P3"
+                        ]
+                    ],
+                    "d_other": [],
+                    "d_segs": [
+                        [
+                            [
+                                "P1",
+                                "P1:30014",
+                                "P4"
+                            ]
+                        ],
+                        [
+                            [
+                                "P4",
+                                "P4:30045",
+                                "P5",
+                                "P5:30053",
+                                "P3"
+                            ],
+                            [
+                                "P4",
+                                "P4:30046",
+                                "P6",
+                                "P6:30063",
+                                "P3"
+                            ]
+                        ]
+                    ],
+                    "d_attr": {
+                        "igp": 30,
+                        "te": 30,
+                        "delay": 300.0,
+                        "min_hop": 3,
+                        "max_min_band": 50
+                    },
+                    "time": 0.34
+                }
+            }
+        ]
+    }
+
+
+Asynchronous Update Bod Policy
+------------------------------
+
+变更BoD SR Policy的异步调用接口
+
+.. code-block:: sh
+
+    POST api/pasta/async_bod_pasta
+
+**Request**
+
+与同步接口的请求格式相同，具体请参见Synchronous Update Bod Policy部分的内容。
+
+**Response paramters in data list**
+
+异步调用接口会以task_id为返回值，task_id是异步任务的id，通过异步任务查询接口可以获得任务的执行状态，具体请参见vista/api/async_task部分
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "task_id": "af2b62e3-9c05-4ae9-93c5-59073750bc67"
+            }
+        ]
+    }
+
+
+Synchronous Bod Policies Global Reoptimize
+------------------------------------------
+
+BoD SR Policies全局重优化的同步调用接口。
+
+.. code-block:: sh
+
+    POST api/reopt/bod_reoptimize
+
+| 输入拓扑信息（Node，Link），所有待优化的bod policies，使用的算法类型及参数，重优化全局参数，对所有bod policies进行重优化计算
+| 计算后，会根据算法类型，返回对应的算路结果，包括SID List、及其逐跳路径信息
+| 全局重优化会为每一条传入的policy重新计算路径，全部policies重算成功后，返回所有policies更新后的结果；如果中途更新失败，则返回优化失败
+
+Tips
+
+- 全局重优化计算可支持根据输入的拓扑，policies信息，使用不同的算路算法，同时计算多种优化结果；所使用的算法类型，可在global全局参数中指定，各个算法相互独立计算执行
+- 在输入的Node结构中，需要提供节点所有的prefix信息，包括（prefix，prefix_algorithm，prefix_sid）；为不同policy计算路径时，根据policy的algorithm属性，在nodes的prefix中过滤出ip，sid信息
+- bod policies的重优化过程，需要对policy的优化顺序进行排序，需在全局参数sorting中指定基于预留带宽/优先级的排序方式
+
+字段说明：
+
+| 使用Non-SPF算法对policies进行重优化时，需要提供如下参数：
+
+- loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10
+- sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽
+- top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果
+- limit: 返回指定sorter满足limit限制的路径，如delay小于1s
+
+| 全局参数中需要额外提供如下参数：
+
+- sorting: 指定bod policies的排序算法类型，支持按policy的预留带宽，或优先级进行排序
+- flow_factor: 指定当计算结果出现ECMP路径时，如何在ECMP链路上分配policy带宽或流量值
+- real_traffic: 路径计算时，是否参考链路的真实使用带宽
+- traffic_ratio: 比较预留带宽模型和真实链路使用带宽的系数
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``sr_policy``            body     sr_policy True      SR policy List
+``global``               body     global    True      Global setting information
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``prefix``               body     string    True      Node IP address for relative prefix
+``prefix_algorithm``     body     integer   True      alogrithm id for relative prefix
+``prefix_sid``           body     integer   True      Node SID for relative prefix
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   True      Link SID
+``igp``                  body     integer   True      Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``qos_class``            body     qos_class False     Link available bandwidth in relative qos class
+=======================  ======== ========= ========= ====================================================
+
+**Qos_class**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``class``                body     string    True      Qos class type
+``bandwidth_reserve``    body     string    True      Total bandwidth reserved for qos class
+``bandwidth_available``  body     string    True      Available bandwidth in qos class
+=======================  ======== ========= ========= ====================================================
+
+**sr_policy**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      SR Policy identity
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``algorithm``            body     integer   True      Algorithm id in policy constraints
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``segment_list``         body     string    True      Policy segment_list
+``class``                body     string    True      Qos class Type
+``priority``             body     integer   True      Policy Priority
+``path``                 body     list      True      Policy explicit path
+=======================  ======== ========= ========= ====================================================
+
+**global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algorithm``            body     algorithm True      Algorithm list
+``sorting``              body     string    True      Policies sort algorithm type
+``flow_factor``          body     integer   True      Bandwidth / Traffic effecting factor (default: 1)
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+=======================  ======== ========= ========= ====================================================
+
+**algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "109b7a18e70c4c04a9cd443edd425fa3",
+        "prefix": [
+            {
+            "prefix": "3.3.3.3/32",
+            "prefix_algorithm": 0,
+            "prefix_sid": 17003
+            }, {
+            "prefix": "3.3.3.3/32",
+            "prefix_algorithm": 1,
+            "prefix_sid": 18003
+            }
+        ]
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "id": "067293286cda42758206c5729fb6bd46",
+        "local": "109b7a18e70c4c04a9cd443edd425fa3",
+        "remote": "3b5e12c1d5954e749e2ec0977921e15e",
+        "ip": "192.11.3.3",
+        "sid": 17,
+        "igp": 10,
+        "te": 10,
+        "delay": 10,
+        "bandwidth": 1000,
+        "qos_class": [
+            {
+            "class": "Default",
+            "bandwidth_reserve": 100000000.0,
+            "bandwidth_available": 100000000.0
+            }, {
+            "class": "Gold",
+            "bandwidth_reserve": 100000000.0,
+            "bandwidth_available": 100000000.0
+            }, {
+            "class": "Silver",
+            "bandwidth_reserve": 100000000.0,
+            "bandwidth_available": 100000000.0
+            }
+        ]
+    }
+
+**SR_policy Example**
+
+.. code-block:: json
+
+    {
+        "id": "041166386a3f420e883cf9e189e69738",
+        "headend": "2d5f4b567c0c46d186200ccfc746df59",
+        "tailend": "db542614b117425aac7258670b007165",
+        "metric": "te",
+        "algorithm": 0,
+        "affinity": "",
+        "mask": "",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": false,
+        "bandwidth": 1000,
+        "segment_list": "17111",
+        "class": "Gold",
+        "priority": 2,
+        "path": [[["2d5f4b567c0c46d186200ccfc746df59","e7e03465f928462ab0733760665ad1e3",
+                   "e4b314f155e54070aa776ce71816691b","4f2387e68a5844dc83dc373907d33963",
+                   "4571f1ed0aec4ceebc1b16568d9fd2bf","bd4e0dec2ce84017baec0c356c7bd219",
+                   "db542614b117425aac7258670b007165"]]]
+    }
+
+**Global Example**
+
+.. code-block:: json
+
+    {
+        "algorithm": [{
+            "algo": 0
+        }],
+        "sorting": "bandwidth_desc",
+        "flow_factor": 1.0,
+        "real_traffic": false,
+        "traffic_ratio": 1.0
+    }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "109b7a18e70c4c04a9cd443edd425fa3",
+            "prefix": [{
+                "prefix": "3.3.3.3/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17003
+            }, {
+                "prefix": "3.3.3.3/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18003
+            }]
+        }, {
+            "id": "2b9b72c5013843029fce829e6cc7f16f",
+            "prefix": [{
+                "prefix": "1.1.1.1/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17001
+            }]
+        }, {
+            "id": "2d5f4b567c0c46d186200ccfc746df59",
+            "prefix": [{
+                "prefix": "113.113.113.113/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18113
+            }, {
+                "prefix": "113.113.113.113/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17113
+            }, {
+                "prefix": "192.113.14.0/24",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17120
+            }, {
+                "prefix": "113.113.113.103/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 20113
+            }, {
+                "prefix": "113.113.113.113/32",
+                "prefix_algorithm": 128,
+                "prefix_sid": 19113
+            }]
+        }, {
+            "id": "3b5e12c1d5954e749e2ec0977921e15e",
+            "prefix": [{
+                "prefix": "11.11.11.11/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17011
+            }, {
+                "prefix": "11.11.11.11/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18011
+            }]
+        }, {
+            "id": "42c10984f60c43dd8a27e557d2102272",
+            "prefix": [{
+                "prefix": "117.117.117.117/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 18217
+            }]
+        }, {
+            "id": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "prefix": [{
+                "prefix": "7.7.7.7/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18007
+            }, {
+                "prefix": "7.7.7.7/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17007
+            }]
+        }, {
+            "id": "7a69ff9890ea451795042e74ff22a4f1",
+            "prefix": [{
+                "prefix": "114.114.114.114/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 18215
+            }, {
+                "prefix": "194.194.194.194/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 16194
+            }]
+        }, {
+            "id": "89594b446a2a4596b8dd8940cce0ca4c",
+            "prefix": [{
+                "prefix": "194.194.194.194/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 16194
+            }, {
+                "prefix": "115.115.115.115/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 19335
+            }, {
+                "prefix": "195.195.195.195/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 16195
+            }]
+        }, {
+            "id": "8b092db9b8094d12bbcc669f3b5a9485",
+            "prefix": [{
+                "prefix": "196.196.196.196/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17196
+            }, {
+                "prefix": "196.196.196.196/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18196
+            }]
+        }, {
+            "id": "db542614b117425aac7258670b007165",
+            "prefix": [{
+                "prefix": "111.111.111.111/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18111
+            }, {
+                "prefix": "111.111.111.111/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17111
+            }]
+        }, {
+            "id": "e4b314f155e54070aa776ce71816691b",
+            "prefix": [{
+                "prefix": "14.14.14.14/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17014
+            }, {
+                "prefix": "14.14.14.14/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18014
+            }]
+        }, {
+            "id": "e7708d554029448591902b274cdb9c9a",
+            "prefix": [{
+                "prefix": "2.2.2.2/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 17002
+            }, {
+                "prefix": "2.2.2.2/32",
+                "prefix_algorithm": 1,
+                "prefix_sid": 18002
+            }]
+        }],
+        "links": [{
+            "id": "067293286cda42758206c5729fb6bd46",
+            "local": "109b7a18e70c4c04a9cd443edd425fa3",
+            "remote": "3b5e12c1d5954e749e2ec0977921e15e",
+            "ip": "192.11.3.3",
+            "sid": 17,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "9d04c62121bf4ab2b7ebc4665e7a5ebf",
+            "local": "109b7a18e70c4c04a9cd443edd425fa3",
+            "remote": "2b9b72c5013843029fce829e6cc7f16f",
+            "ip": "192.1.3.3",
+            "sid": 16,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "c51966de30764cbfa8e6119123e82a0f",
+            "local": "109b7a18e70c4c04a9cd443edd425fa3",
+            "remote": "e7708d554029448591902b274cdb9c9a",
+            "ip": "192.2.3.3",
+            "sid": 18,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "208e4950275f4e9f9a4bd2dd2d13f1d6",
+            "local": "2b9b72c5013843029fce829e6cc7f16f",
+            "remote": "7a69ff9890ea451795042e74ff22a4f1",
+            "ip": "192.1.114.1",
+            "sid": 20,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "2db3c21066584396ba782201ad92e59c",
+            "local": "2b9b72c5013843029fce829e6cc7f16f",
+            "remote": "109b7a18e70c4c04a9cd443edd425fa3",
+            "ip": "192.1.3.1",
+            "sid": 17,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "92b69de35bf2469bad4269024f74770b",
+            "local": "2b9b72c5013843029fce829e6cc7f16f",
+            "remote": "7a69ff9890ea451795042e74ff22a4f1",
+            "ip": "192.114.1.1",
+            "sid": 16,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "e00c42885890411581f52b51028e73f7",
+            "local": "2b9b72c5013843029fce829e6cc7f16f",
+            "remote": "e7708d554029448591902b274cdb9c9a",
+            "ip": "192.1.2.1",
+            "sid": 18,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "f807989afb74404f991632327b51e999",
+            "local": "2b9b72c5013843029fce829e6cc7f16f",
+            "remote": "e4b314f155e54070aa776ce71816691b",
+            "ip": "192.1.14.1",
+            "sid": 19,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "e7e03465f928462ab0733760665ad1e3",
+            "local": "2d5f4b567c0c46d186200ccfc746df59",
+            "remote": "e4b314f155e54070aa776ce71816691b",
+            "ip": "192.113.14.113",
+            "sid": 24003,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "9971b971394345649c9dee695093e3ec",
+            "local": "3b5e12c1d5954e749e2ec0977921e15e",
+            "remote": "109b7a18e70c4c04a9cd443edd425fa3",
+            "ip": "192.11.3.11",
+            "sid": 24001,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "d06c35bdefa342af9d351fdc5eacd1ad",
+            "local": "3b5e12c1d5954e749e2ec0977921e15e",
+            "remote": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "ip": "192.7.11.11",
+            "sid": 24005,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "dcc70494605245408bec4f8cf72b0ac5",
+            "local": "3b5e12c1d5954e749e2ec0977921e15e",
+            "remote": "e4b314f155e54070aa776ce71816691b",
+            "ip": "192.11.14.11",
+            "sid": 24003,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "delay": 10.0,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "25c851ff36d54d2bbd7c4433477a5652",
+            "local": "42c10984f60c43dd8a27e557d2102272",
+            "remote": "7a69ff9890ea451795042e74ff22a4f1",
+            "ip": "192.114.117.117",
+            "sid": 24001,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "5939de0203f84e9b82696cb61756a67b",
+            "local": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "remote": "e4b314f155e54070aa776ce71816691b",
+            "ip": "192.7.14.7",
+            "sid": 24007,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "delay": 3000.0,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "68d6fe091e2d4e4faca4dd91913097ad",
+            "local": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "remote": "3b5e12c1d5954e749e2ec0977921e15e",
+            "ip": "192.7.11.7",
+            "sid": 24009,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "bd4e0dec2ce84017baec0c356c7bd219",
+            "local": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "remote": "db542614b117425aac7258670b007165",
+            "ip": "192.111.7.7",
+            "sid": 24011,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "delay": 23.456,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "7c4847ed61844731adf39443f4340ae5",
+            "local": "7a69ff9890ea451795042e74ff22a4f1",
+            "remote": "2b9b72c5013843029fce829e6cc7f16f",
+            "ip": "192.114.1.114",
+            "sid": 24003,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 400,
+            "affinity": 0,
+            "delay": 15.0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "b5d40de4bd6e4f5aaef2d14627f8075b",
+            "local": "7a69ff9890ea451795042e74ff22a4f1",
+            "remote": "42c10984f60c43dd8a27e557d2102272",
+            "ip": "192.114.117.114",
+            "sid": 24007,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "d83e8f46ecdd4e3b8068399ee805adaa",
+            "local": "7a69ff9890ea451795042e74ff22a4f1",
+            "remote": "2b9b72c5013843029fce829e6cc7f16f",
+            "ip": "192.1.114.114",
+            "sid": 24001,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "8fe0aafa55b74bf4b91b3c95308101c4",
+            "local": "89594b446a2a4596b8dd8940cce0ca4c",
+            "remote": "8b092db9b8094d12bbcc669f3b5a9485",
+            "ip": "192.115.116.115",
+            "sid": 24040,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "ee31765f0af64a98a87ccb6d7bef0ef0",
+            "local": "89594b446a2a4596b8dd8940cce0ca4c",
+            "remote": "e7708d554029448591902b274cdb9c9a",
+            "ip": "192.2.115.115",
+            "sid": 24001,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "9f4e07ef12d447378535d2241b1250f7",
+            "local": "8b092db9b8094d12bbcc669f3b5a9485",
+            "remote": "89594b446a2a4596b8dd8940cce0ca4c",
+            "ip": "192.115.116.116",
+            "sid": 16,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "519f966043934dada23043782b818933",
+            "local": "db542614b117425aac7258670b007165",
+            "remote": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "ip": "192.111.7.111",
+            "sid": 24007,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "c7ca8958c19b45bdb4930601eb3e78fa",
+            "local": "db542614b117425aac7258670b007165",
+            "remote": "e7708d554029448591902b274cdb9c9a",
+            "ip": "192.2.111.111",
+            "sid": 24001,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "affinity": 0,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "3a853af0d8494a768b3ad9712e0fbd8f",
+            "local": "e4b314f155e54070aa776ce71816691b",
+            "remote": "3b5e12c1d5954e749e2ec0977921e15e",
+            "ip": "192.11.14.14",
+            "sid": 24005,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "4f2387e68a5844dc83dc373907d33963",
+            "local": "e4b314f155e54070aa776ce71816691b",
+            "remote": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "ip": "192.7.14.14",
+            "sid": 24003,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "d7d2ccbb0a6349fe83e9ee91ecb30fbe",
+            "local": "e4b314f155e54070aa776ce71816691b",
+            "remote": "2b9b72c5013843029fce829e6cc7f16f",
+            "ip": "192.1.14.14",
+            "sid": 24001,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "e8bc3f64277f40ea90c723a611e704eb",
+            "local": "e4b314f155e54070aa776ce71816691b",
+            "remote": "2d5f4b567c0c46d186200ccfc746df59",
+            "ip": "192.113.14.14",
+            "sid": 24007,
+            "igp": 10,
+            "te": 10,
+            "bandwidth": 1000,
+            "delay": 30.0,
+            "qos_class": [{
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "28fdfcdf0a6c488087987396ac3a85a8",
+            "local": "e7708d554029448591902b274cdb9c9a",
+            "remote": "89594b446a2a4596b8dd8940cce0ca4c",
+            "ip": "192.2.115.2",
+            "sid": 18,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "4b995459058541f8b51b53fe4786f29f",
+            "local": "e7708d554029448591902b274cdb9c9a",
+            "remote": "2b9b72c5013843029fce829e6cc7f16f",
+            "ip": "192.1.2.2",
+            "sid": 16,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "be737744f9a246b398ad8eadd9acd5ff",
+            "local": "e7708d554029448591902b274cdb9c9a",
+            "remote": "db542614b117425aac7258670b007165",
+            "ip": "192.2.111.2",
+            "sid": 19,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }, {
+            "id": "edde2d0481ac48f4bf6f0311f2b7cf8f",
+            "local": "e7708d554029448591902b274cdb9c9a",
+            "remote": "109b7a18e70c4c04a9cd443edd425fa3",
+            "ip": "192.2.3.2",
+            "sid": 17,
+            "igp": 10,
+            "te": 10,
+            "delay": 10,
+            "bandwidth": 1000,
+            "qos_class": [{
+                "class": "Gold",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Default",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }, {
+                "class": "Silver",
+                "bandwidth_reserve": 100000000.0,
+                "bandwidth_available": 100000000.0
+            }]
+        }],
+        "sr_policy": [{
+            "id": "041166386a3f420e883cf9e189e69738",
+            "headend": "2d5f4b567c0c46d186200ccfc746df59",
+            "tailend": "db542614b117425aac7258670b007165",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17111",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "2ce01b6cd4b04adca26f077f1b35ff53",
+            "headend": "2d5f4b567c0c46d186200ccfc746df59",
+            "tailend": "db542614b117425aac7258670b007165",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17111",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "61cdf7c2b60b4da1ac3d09fc7007d979",
+            "headend": "2d5f4b567c0c46d186200ccfc746df59",
+            "tailend": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17007",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "f06020c22f6d4c17a228272548d1b2a2",
+            "headend": "2d5f4b567c0c46d186200ccfc746df59",
+            "tailend": "db542614b117425aac7258670b007165",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17007 17111",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "f94e8b2c99834713aabbba3d2765689f",
+            "headend": "2d5f4b567c0c46d186200ccfc746df59",
+            "tailend": "db542614b117425aac7258670b007165",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17111",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "00dcb8d64c78489a8246ec1b9584ddf8",
+            "headend": "89594b446a2a4596b8dd8940cce0ca4c",
+            "tailend": "7a69ff9890ea451795042e74ff22a4f1",
+            "metric": "te",
+            "algorithm": 0,
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "16194",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "16d2476b5c304a9a97af4ce8458715fe",
+            "headend": "db542614b117425aac7258670b007165",
+            "tailend": "2d5f4b567c0c46d186200ccfc746df59",
+            "metric": "igp",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17113",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "2501a06f4d4e4a9aac004a2caa4fe889",
+            "headend": "db542614b117425aac7258670b007165",
+            "tailend": "2d5f4b567c0c46d186200ccfc746df59",
+            "metric": "latency",
+            "algorithm": 0,
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17003 17011 17113",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "1a8f2827580e4871ad1e48feb825bbb8",
+            "headend": "db542614b117425aac7258670b007165",
+            "tailend": "2d5f4b567c0c46d186200ccfc746df59",
+            "metric": "te",
+            "algorithm": 0,
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17003 17113",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "1e31d5470e7e4b27b3f6de31f1b1235d",
+            "headend": "db542614b117425aac7258670b007165",
+            "tailend": "2d5f4b567c0c46d186200ccfc746df59",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17001 17113",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "5fc5985e6a0a4d57982f8faa99e34751",
+            "headend": "db542614b117425aac7258670b007165",
+            "tailend": "2d5f4b567c0c46d186200ccfc746df59",
+            "metric": "igp",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17113",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }, {
+            "id": "ad5173c4f5a7472fa3bae71af81bcec6",
+            "headend": "db542614b117425aac7258670b007165",
+            "tailend": "2d5f4b567c0c46d186200ccfc746df59",
+            "metric": "te",
+            "algorithm": 0,
+            "affinity": "",
+            "mask": "",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "bandwidth": 1000,
+            "segment_list": "17001 17113",
+            "class": "Gold",
+            "priority": 2,
+            "path": []
+        }],
+        "global": {
+            "algorithm": [{
+                "algo": 0
+            }],
+            "sorting": "bandwidth_desc",
+            "flow_factor": 1.0,
+            "real_traffic": false,
+            "traffic_ratio": 1.0
+        }
+    }
+
+**Response paramters**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Error info
+``data``                 body     data      Data detail info all algorithm instances involved
+=======================  ======== ========= ====================================================
+
+**Response paramters in single algorithm instance data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``algo_type``            body     integer   Algorithm type: 0=SPF ; 1 = Non SPF
+``status``               body     bool      Success or not for current algorithm
+``info``                 body     dic       Error info for current algorithm
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``id``                   body     string    Policy identity
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "algo_type": 0,
+                "status": true,
+                "info": {},
+                "data": [
+                    {
+                        "id": "041166386a3f420e883cf9e189e69738",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "db542614b117425aac7258670b007165",
+                                    "ip": "111.111.111.111/32",
+                                    "sid": 17111
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "2d5f4b567c0c46d186200ccfc746df59",
+                                    "e7e03465f928462ab0733760665ad1e3",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "4f2387e68a5844dc83dc373907d33963",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "bd4e0dec2ce84017baec0c356c7bd219",
+                                    "db542614b117425aac7258670b007165"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "2d5f4b567c0c46d186200ccfc746df59",
+                                        "e7e03465f928462ab0733760665ad1e3",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "4f2387e68a5844dc83dc373907d33963",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "bd4e0dec2ce84017baec0c356c7bd219",
+                                        "db542614b117425aac7258670b007165"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 43.456,
+                                "min_hop": 3,
+                                "max_min_band": 100000000
+                            },
+                            "other": [],
+                            "time": 0.49
+                        }
+                    },
+                    {
+                        "id": "2ce01b6cd4b04adca26f077f1b35ff53",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "db542614b117425aac7258670b007165",
+                                    "ip": "111.111.111.111/32",
+                                    "sid": 17111
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "2d5f4b567c0c46d186200ccfc746df59",
+                                    "e7e03465f928462ab0733760665ad1e3",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "4f2387e68a5844dc83dc373907d33963",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "bd4e0dec2ce84017baec0c356c7bd219",
+                                    "db542614b117425aac7258670b007165"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "2d5f4b567c0c46d186200ccfc746df59",
+                                        "e7e03465f928462ab0733760665ad1e3",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "4f2387e68a5844dc83dc373907d33963",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "bd4e0dec2ce84017baec0c356c7bd219",
+                                        "db542614b117425aac7258670b007165"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 43.456,
+                                "min_hop": 3,
+                                "max_min_band": 99999000
+                            },
+                            "other": [],
+                            "time": 0.23
+                        }
+                    },
+                    {
+                        "id": "61cdf7c2b60b4da1ac3d09fc7007d979",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "ip": "7.7.7.7/32",
+                                    "sid": 17007
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "2d5f4b567c0c46d186200ccfc746df59",
+                                    "e7e03465f928462ab0733760665ad1e3",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "4f2387e68a5844dc83dc373907d33963",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "2d5f4b567c0c46d186200ccfc746df59",
+                                        "e7e03465f928462ab0733760665ad1e3",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "4f2387e68a5844dc83dc373907d33963",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 20,
+                                "te": 20,
+                                "delay": 20.0,
+                                "min_hop": 2,
+                                "max_min_band": 99998000
+                            },
+                            "other": [],
+                            "time": 0.17
+                        }
+                    },
+                    {
+                        "id": "f06020c22f6d4c17a228272548d1b2a2",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "db542614b117425aac7258670b007165",
+                                    "ip": "111.111.111.111/32",
+                                    "sid": 17111
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "2d5f4b567c0c46d186200ccfc746df59",
+                                    "e7e03465f928462ab0733760665ad1e3",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "4f2387e68a5844dc83dc373907d33963",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "bd4e0dec2ce84017baec0c356c7bd219",
+                                    "db542614b117425aac7258670b007165"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "2d5f4b567c0c46d186200ccfc746df59",
+                                        "e7e03465f928462ab0733760665ad1e3",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "4f2387e68a5844dc83dc373907d33963",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "bd4e0dec2ce84017baec0c356c7bd219",
+                                        "db542614b117425aac7258670b007165"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 43.456,
+                                "min_hop": 3,
+                                "max_min_band": 99997000
+                            },
+                            "other": [],
+                            "time": 0.21
+                        }
+                    },
+                    {
+                        "id": "f94e8b2c99834713aabbba3d2765689f",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "db542614b117425aac7258670b007165",
+                                    "ip": "111.111.111.111/32",
+                                    "sid": 17111
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "2d5f4b567c0c46d186200ccfc746df59",
+                                    "e7e03465f928462ab0733760665ad1e3",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "4f2387e68a5844dc83dc373907d33963",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "bd4e0dec2ce84017baec0c356c7bd219",
+                                    "db542614b117425aac7258670b007165"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "2d5f4b567c0c46d186200ccfc746df59",
+                                        "e7e03465f928462ab0733760665ad1e3",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "4f2387e68a5844dc83dc373907d33963",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "bd4e0dec2ce84017baec0c356c7bd219",
+                                        "db542614b117425aac7258670b007165"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 43.456,
+                                "min_hop": 3,
+                                "max_min_band": 99996000
+                            },
+                            "other": [],
+                            "time": 0.24
+                        }
+                    },
+                    {
+                        "id": "00dcb8d64c78489a8246ec1b9584ddf8",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "7a69ff9890ea451795042e74ff22a4f1",
+                                    "ip": "114.114.114.114/32",
+                                    "sid": 18215
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "89594b446a2a4596b8dd8940cce0ca4c",
+                                    "ee31765f0af64a98a87ccb6d7bef0ef0",
+                                    "e7708d554029448591902b274cdb9c9a",
+                                    "4b995459058541f8b51b53fe4786f29f",
+                                    "2b9b72c5013843029fce829e6cc7f16f",
+                                    "208e4950275f4e9f9a4bd2dd2d13f1d6",
+                                    "7a69ff9890ea451795042e74ff22a4f1"
+                                ],
+                                [
+                                    "89594b446a2a4596b8dd8940cce0ca4c",
+                                    "ee31765f0af64a98a87ccb6d7bef0ef0",
+                                    "e7708d554029448591902b274cdb9c9a",
+                                    "4b995459058541f8b51b53fe4786f29f",
+                                    "2b9b72c5013843029fce829e6cc7f16f",
+                                    "92b69de35bf2469bad4269024f74770b",
+                                    "7a69ff9890ea451795042e74ff22a4f1"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "89594b446a2a4596b8dd8940cce0ca4c",
+                                        "ee31765f0af64a98a87ccb6d7bef0ef0",
+                                        "e7708d554029448591902b274cdb9c9a",
+                                        "4b995459058541f8b51b53fe4786f29f",
+                                        "2b9b72c5013843029fce829e6cc7f16f",
+                                        "208e4950275f4e9f9a4bd2dd2d13f1d6",
+                                        "7a69ff9890ea451795042e74ff22a4f1"
+                                    ],
+                                    [
+                                        "89594b446a2a4596b8dd8940cce0ca4c",
+                                        "ee31765f0af64a98a87ccb6d7bef0ef0",
+                                        "e7708d554029448591902b274cdb9c9a",
+                                        "4b995459058541f8b51b53fe4786f29f",
+                                        "2b9b72c5013843029fce829e6cc7f16f",
+                                        "92b69de35bf2469bad4269024f74770b",
+                                        "7a69ff9890ea451795042e74ff22a4f1"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 30.0,
+                                "min_hop": 3,
+                                "max_min_band": 100000000
+                            },
+                            "other": [],
+                            "time": 0.26
+                        }
+                    },
+                    {
+                        "id": "16d2476b5c304a9a97af4ce8458715fe",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "2d5f4b567c0c46d186200ccfc746df59",
+                                    "ip": "113.113.113.113/32",
+                                    "sid": 17113
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "db542614b117425aac7258670b007165",
+                                    "519f966043934dada23043782b818933",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "5939de0203f84e9b82696cb61756a67b",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "e8bc3f64277f40ea90c723a611e704eb",
+                                    "2d5f4b567c0c46d186200ccfc746df59"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "db542614b117425aac7258670b007165",
+                                        "519f966043934dada23043782b818933",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "5939de0203f84e9b82696cb61756a67b",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "e8bc3f64277f40ea90c723a611e704eb",
+                                        "2d5f4b567c0c46d186200ccfc746df59"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 3040.0,
+                                "min_hop": 3,
+                                "max_min_band": 100000000
+                            },
+                            "other": [],
+                            "time": 0.25
+                        }
+                    },
+                    {
+                        "id": "2501a06f4d4e4a9aac004a2caa4fe889",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "2d5f4b567c0c46d186200ccfc746df59",
+                                    "ip": "113.113.113.113/32",
+                                    "sid": 17113
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "db542614b117425aac7258670b007165",
+                                    "519f966043934dada23043782b818933",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "5939de0203f84e9b82696cb61756a67b",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "e8bc3f64277f40ea90c723a611e704eb",
+                                    "2d5f4b567c0c46d186200ccfc746df59"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "db542614b117425aac7258670b007165",
+                                        "519f966043934dada23043782b818933",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "5939de0203f84e9b82696cb61756a67b",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "e8bc3f64277f40ea90c723a611e704eb",
+                                        "2d5f4b567c0c46d186200ccfc746df59"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 3040.0,
+                                "min_hop": 3,
+                                "max_min_band": 99999000
+                            },
+                            "other": [],
+                            "time": 0.25
+                        }
+                    },
+                    {
+                        "id": "1a8f2827580e4871ad1e48feb825bbb8",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "2d5f4b567c0c46d186200ccfc746df59",
+                                    "ip": "113.113.113.113/32",
+                                    "sid": 17113
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "db542614b117425aac7258670b007165",
+                                    "519f966043934dada23043782b818933",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "5939de0203f84e9b82696cb61756a67b",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "e8bc3f64277f40ea90c723a611e704eb",
+                                    "2d5f4b567c0c46d186200ccfc746df59"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "db542614b117425aac7258670b007165",
+                                        "519f966043934dada23043782b818933",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "5939de0203f84e9b82696cb61756a67b",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "e8bc3f64277f40ea90c723a611e704eb",
+                                        "2d5f4b567c0c46d186200ccfc746df59"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 3040.0,
+                                "min_hop": 3,
+                                "max_min_band": 99998000
+                            },
+                            "other": [],
+                            "time": 0.22
+                        }
+                    },
+                    {
+                        "id": "1e31d5470e7e4b27b3f6de31f1b1235d",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "2d5f4b567c0c46d186200ccfc746df59",
+                                    "ip": "113.113.113.113/32",
+                                    "sid": 17113
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "db542614b117425aac7258670b007165",
+                                    "519f966043934dada23043782b818933",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "5939de0203f84e9b82696cb61756a67b",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "e8bc3f64277f40ea90c723a611e704eb",
+                                    "2d5f4b567c0c46d186200ccfc746df59"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "db542614b117425aac7258670b007165",
+                                        "519f966043934dada23043782b818933",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "5939de0203f84e9b82696cb61756a67b",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "e8bc3f64277f40ea90c723a611e704eb",
+                                        "2d5f4b567c0c46d186200ccfc746df59"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 3040.0,
+                                "min_hop": 3,
+                                "max_min_band": 99997000
+                            },
+                            "other": [],
+                            "time": 0.24
+                        }
+                    },
+                    {
+                        "id": "5fc5985e6a0a4d57982f8faa99e34751",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "2d5f4b567c0c46d186200ccfc746df59",
+                                    "ip": "113.113.113.113/32",
+                                    "sid": 17113
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "db542614b117425aac7258670b007165",
+                                    "519f966043934dada23043782b818933",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "5939de0203f84e9b82696cb61756a67b",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "e8bc3f64277f40ea90c723a611e704eb",
+                                    "2d5f4b567c0c46d186200ccfc746df59"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "db542614b117425aac7258670b007165",
+                                        "519f966043934dada23043782b818933",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "5939de0203f84e9b82696cb61756a67b",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "e8bc3f64277f40ea90c723a611e704eb",
+                                        "2d5f4b567c0c46d186200ccfc746df59"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 3040.0,
+                                "min_hop": 3,
+                                "max_min_band": 99996000
+                            },
+                            "other": [],
+                            "time": 0.28
+                        }
+                    },
+                    {
+                        "id": "ad5173c4f5a7472fa3bae71af81bcec6",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "2d5f4b567c0c46d186200ccfc746df59",
+                                    "ip": "113.113.113.113/32",
+                                    "sid": 17113
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "db542614b117425aac7258670b007165",
+                                    "519f966043934dada23043782b818933",
+                                    "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                    "5939de0203f84e9b82696cb61756a67b",
+                                    "e4b314f155e54070aa776ce71816691b",
+                                    "e8bc3f64277f40ea90c723a611e704eb",
+                                    "2d5f4b567c0c46d186200ccfc746df59"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "db542614b117425aac7258670b007165",
+                                        "519f966043934dada23043782b818933",
+                                        "4571f1ed0aec4ceebc1b16568d9fd2bf",
+                                        "5939de0203f84e9b82696cb61756a67b",
+                                        "e4b314f155e54070aa776ce71816691b",
+                                        "e8bc3f64277f40ea90c723a611e704eb",
+                                        "2d5f4b567c0c46d186200ccfc746df59"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 3040.0,
+                                "min_hop": 3,
+                                "max_min_band": 99995000
+                            },
+                            "other": [],
+                            "time": 0.23
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+
+
+Asynchronous Bod Policies Global Reoptimize
+-------------------------------------------
+
+BoD SR Policies全局重优化的异步调用接口
+
+.. code-block:: sh
+
+    POST api/reopt/async_bod_reoptimize
+
+**Request**
+
+与同步接口的请求格式相同，具体请参见Synchronous Bod Policies Global Reoptimize部分的内容。
+
+**Response paramters in data list**
+
+异步调用接口会以task_id为返回值，task_id是异步任务的id，通过异步任务查询接口可以获得任务的执行状态，具体请参见vista/api/async_task部分
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "task_id": "af2b62e3-9c05-4ae9-93c5-59073750bc67"
+            }
+        ]
+    }
+
+
+Synchronous Bod Policies Congested Reoptimize
+---------------------------------------------
+
+BoD SR Policies拥塞优化的同步调用接口
+
+.. code-block:: sh
+
+    POST api/reopt/bod_reoptimize
+
+| 输入拓扑信息（Node，Link），所有拓扑中可以被优化的bod policies，产生拥塞的链路，使用的算法类型及参数，重优化全局参数，对所有bod policies进行重优化计算
+| 计算后，会根据算法类型，返回对应的算路结果，包括SID List、及其逐跳路径信息
+| 拥塞优化计算可以设定优化模式，"loose"模式，在只能部分缓解链路拥塞时，返回部分policies的优化结果；为"strict"模式，如果不能将链路调整到非拥塞状态，则返回优化失败
+
+Tips
+
+- 全局重优化计算可支持根据输入的拓扑，policies信息，使用不同的算路算法，同时计算多种优化结果；所使用的算法类型，可在global全局参数中指定，各个算法相互独立计算执行
+- 在输入的Node结构中，需要提供节点所有的prefix信息，包括（prefix，prefix_algorithm，prefix_sid）；为不同policy计算路径时，根据policy的algorithm属性，在nodes的prefix中过滤出ip，sid信息
+- 拥塞优化过程中，对经过拥塞链路的bod policies会重新计算，需要指定相关policies的优化顺序，需在全局参数中指定排序规则，以及相关权重参数
+
+字段说明：
+
+| 使用Non-SPF算法对policies进行重优化时，需要提供如下参数：
+
+- loose: 是否计算非spf路径，默认为false，如果置为true，则会计算端到端满足条件的所有路径，为了保证算法效率，非spf路径数有top限制，默认为10
+- sorter: sorter会对cspf计算结果进行排序，此排序结果会影响压缩返回的最优方案。默认使用计算时选择的metric，也可以选择最小跳数或者最大最小剩余带宽
+- top: 对返回的路径数量进行限制，为保证算法效率，会直接约束cspf计算结果
+- limit: 返回指定sorter满足limit限制的路径，如delay小于1s
+
+| 全局参数中需要额外提供如下参数：
+
+- reopt_mode: 指定拥塞优化模式，包括'loose', 'strict'两种模式
+- flow_factor: 指定当计算结果出现ECMP路径时，如何在ECMP链路上分配policy带宽或流量值
+- real_traffic: 路径计算时，是否参考链路的真实使用带宽
+- traffic_ratio: 比较预留带宽模型和真实链路使用带宽的系数
+- congest_threshold: 链路设定的拥塞阈值
+- target_threshold: 链路设定的拥塞缓解阈值
+- priority_prefer: 拥塞优化时，备选policy的优先级排序方式，支持HIGH，LOW两种方式
+- traffic_prefer: 拥塞优化时，备选policy的traffic_flow排序方式，支持HIGH，LOW两种方式
+- priority_weight: 在衡量备选policy调整的cost时，policy优先级的权重
+- bandwidth_weight: 在衡量备选policy调整的cost时，policy预留带宽的权重
+
+**Request**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``nodes``                body     node      True      Node list
+``links``                body     link      True      Link list
+``congested_link``       body     list      True      congested link id
+``sr_policy``            body     sr_policy True      SR policy List
+``global``               body     global    True      Global setting information
+=======================  ======== ========= ========= ====================================================
+
+**Node**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Node identity
+``prefix``               body     string    True      Node IP address for relative prefix
+``prefix_algorithm``     body     integer   True      alogrithm id for relative prefix
+``prefix_sid``           body     integer   True      Node SID for relative prefix
+=======================  ======== ========= ========= ====================================================
+
+**Link**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      Link identity
+``local``                body     string    True      Link local node identity
+``remote``               body     string    True      Link remote node identity
+``ip``                   body     string    True      Link IP address
+``sid``                  body     integer   True      Link SID
+``igp``                  body     integer   True      Link IGP metric (default: 0)
+``te``                   body     integer   False     Link TE metric (default: 0)
+``delay``                body     integer   False     Link DELAY metric (default: 1000)
+``bandwidth``            body     integer   False     Link bandwidth (default: 0)
+``affinity``             body     integer   False     Link affinity (default: 0)
+``qos_class``            body     qos_class False     Link available bandwidth in relative qos class
+``traffic_flow``         body     integer   False     Link local interface real traffic (default: 0)
+=======================  ======== ========= ========= ====================================================
+
+**Qos_class**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``class``                body     string    True      Qos class type
+``bandwidth_reserve``    body     string    True      Total bandwidth reserved for qos class
+``bandwidth_available``  body     string    True      Available bandwidth in qos class
+``traffic_flow``         body     integer   False     Qos class real traffic (default: 0)
+=======================  ======== ========= ========= ====================================================
+
+**sr_policy**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``id``                   body     string    True      SR Policy identity
+``headend``              body     string    True      Head-end node
+``tailend``              body     string    True      Tail-end node
+``metric``               body     string    False     Metric (igp, te or latency, default: igp)
+``algorithm``            body     integer   True      Algorithm id in policy constraints
+``bandwidth``            body     integer   False     Bandwidth (default: 0)
+``affinity``             body     string    False     Affinity (default: '0x0')
+``mask``                 body     string    False     Affinity Mask (default: '0x0')
+``include``              body     list      False     Include node / link id list (default: [])
+``exclude``              body     list      False     Exclude node / link id list (default: [])
+``disjoint``             body     bool      False     Enable disjoint path or not (default: False)
+``tiebreaker``           body     bool      False     Enable tiebreaker or not (default: False)
+``segment_list``         body     string    True      Policy segment_list
+``class``                body     string    True      Qos class Type
+``priority``             body     integer   True      Policy Priority
+``path``                 body     list      True      Policy explicit path
+``traffic_flow``         body     integer   False     Sr policy real traffic (default: 0)
+=======================  ======== ========= ========= ====================================================
+
+**global**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algorithm``            body     algorithm True      Algorithm list
+``reopt_node``           body     string    True      Congestion optimize mode
+``flow_factor``          body     integer   True      Bandwidth/traffic effecting factor (default: 1)
+``real_traffic``         body     bool      True      Enable link filter by traffic ratio or not
+``traffic_ratio``        body     float     True      The ratio between real and plan
+``congest_threshold``    body     float     True      Threshold for congested link
+``target_threshold``     body     float     True      Link congestion optimize target
+``prioriry_prefer``      body     float     True      Prefered priority type for candidate policy
+``traffic_prefer``       body     float     True      Prefered traffic flow type for candidate policy
+``prioriry_weight``      body     float     True      Priority weight for calculating cost of candidate policy
+``traffic_weight``       body     float     True      Traffic weight for calculating cost of candidate policy
+=======================  ======== ========= ========= ====================================================
+
+**algorithm**
+
+=======================  ======== ========= ========= ====================================================
+Name                     In       Type      Required  Description
+=======================  ======== ========= ========= ====================================================
+``algo``                 body     integer   True      Algorithm type: 0=SPF ; 1 = Non SPF
+``sorter``               body     string    False     Sort paths by (metric, min_hop or max_min_band, default: metric)
+``top``                  body     integer   False     Return at most top paths
+``limit``                body     integer   False     Return paths after limit (equal or less than top).
+``loose``                body     bool      False     Enable loose type (non-spf) or not (default, False)
+=======================  ======== ========= ========= ====================================================
+
+**Node Example**
+
+.. code-block:: json
+
+    {
+        "id": "P1",
+        "prefix": [
+            {
+            "prefix": "1.1.1.1/32",
+            "prefix_algorithm": 0,
+            "prefix_sid": 60001
+            }
+        ]
+    }
+
+**Link Example**
+
+.. code-block:: json
+
+    {
+        "affinity": 0,
+        "remote": "P2",
+        "sid": 30012,
+        "local": "P1",
+        "bandwidth": 100,
+        "ip": "1.1.1.2",
+        "te": 10,
+        "id": "P1:30012",
+        "delay": 100,
+        "igp": 10,
+        "qos_class":[
+            {
+            "class":"Gold",
+            "bandwidth_reserve": 50,
+            "bandwidth_available": 20,
+            "traffic_flow": 0
+            },{
+            "class":"Silver",
+            "bandwidth_reserve": 50,
+            "bandwidth_available": 10,
+            "traffic_flow": 0
+            }
+        ],
+        "traffic_flow": 100
+	}
+
+**SR_policy Example**
+
+.. code-block:: json
+
+    {
+        "id":"SR1",
+        "headend": "P1",
+        "tailend": "P3",
+        "metric": "te",
+        "bandwidth": 20,
+        "algorithm": 0,
+        "affinity": "0x0",
+        "mask": "0x0",
+        "include": [],
+        "exclude": [],
+        "tiebreaker": false,
+        "disjoint": false,
+        "segment_list": "60003",
+        "class":"Gold",
+        "priority": 2,
+        "path": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+        "traffic_flow": 30
+	}
+
+**Global Example**
+
+.. code-block:: json
+
+    {
+        "algorithm": [{
+          "algo": 0
+        },{
+          "algo": 1,
+          "sorter": "metric",
+          "top": 10,
+          "limit": 0,
+          "loose": true
+        }],
+        "reopt_mode": "loose",
+        "flow_factor": 1.0,
+        "real_traffic": false,
+        "traffic_ratio": 1.0,
+        "congest_threshold": 0.8,
+        "target_threshold": 0.7,
+        "prioriry_prefer": "HIGH",
+        "traffic_prefer": "HIGH",
+        "priority_weight": 0.5,
+        "bandwidth_weight": 0.5
+    }
+
+**Request Example**
+
+.. code-block:: json
+
+    {
+        "nodes": [{
+            "id": "P1",
+            "prefix": [{
+                "prefix": "1.1.1.1/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60001
+            }]
+        }, {
+            "id": "P2",
+            "prefix": [{
+                "prefix": "2.2.2.2/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60002
+            }]
+        }, {
+            "id": "P3",
+            "prefix": [{
+                "prefix": "3.3.3.3/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60003
+            }]
+        }, {
+            "id": "P4",
+            "prefix": [{
+                "prefix": "4.4.4.4/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60004
+            }]
+        }, {
+            "id": "P5",
+            "prefix": [{
+                "prefix": "5.5.5.5/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60005
+            }]
+        }, {
+            "id": "P6",
+            "prefix": [{
+                "prefix": "6.6.6.6/32",
+                "prefix_algorithm": 0,
+                "prefix_sid": 60006
+            }]
+        }],
+        "links": [{
+            "affinity": 0,
+            "remote": "P2",
+            "sid": 30012,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.2",
+            "te": 10,
+            "id": "P1:30012",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 20,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 10,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 100
+        },{
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30023,
+            "local": "P2",
+            "bandwidth": 100,
+            "ip": "2.2.2.3",
+            "te": 10,
+            "id": "P2:30023",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 20,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 10,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 100
+        }, {
+            "affinity": 0,
+            "remote": "P4",
+            "sid": 30014,
+            "local": "P1",
+            "bandwidth": 100,
+            "ip": "1.1.1.4",
+            "te": 10,
+            "id": "P1:30014",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 20
+        }, {
+            "affinity": 0,
+            "remote": "P5",
+            "sid": 30045,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.5",
+            "te": 10,
+            "id": "P4:30045",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 10
+        }, {
+            "affinity": 0,
+            "remote": "P6",
+            "sid": 30046,
+            "local": "P4",
+            "bandwidth": 100,
+            "ip": "4.4.4.6",
+            "te": 10,
+            "id": "P4:30046",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 10
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30053,
+            "local": "P5",
+            "bandwidth": 100,
+            "ip": "5.5.5.3",
+            "te": 10,
+            "id": "P5:30053",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 85
+        }, {
+            "affinity": 0,
+            "remote": "P3",
+            "sid": 30063,
+            "local": "P6",
+            "bandwidth": 100,
+            "ip": "6.6.6.3",
+            "te": 10,
+            "id": "P6:30063",
+            "delay": 100,
+            "igp": 10,
+            "qos_class":[{
+                "class":"Gold",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                },{
+                "class":"Silver",
+                "bandwidth_reserve": 50,
+                "bandwidth_available": 50,
+                "traffic_flow": 0
+                }
+            ],
+            "traffic_flow": 10
+        }],
+        "congested_link": [
+            "P1:30012", "P2:30023", "P5:30053"
+        ],
+        "sr_policy":[{
+            "id":"SR1",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 20,
+            "algorithm": 0,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Gold",
+            "priority": 2,
+            "path": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+            "traffic_flow": 30
+        },{
+            "id":"SR2",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 20,
+            "algorithm": 0,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Silver",
+            "priority": 2,
+            "path": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+            "traffic_flow": 15
+        },{
+            "id":"SR5",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 10,
+            "algorithm": 0,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Gold",
+            "priority": 2,
+            "path": [[["P1", "P1:30012", "P2", "P2:30023", "P3"]]],
+            "traffic_flow": 15
+        },{
+            "id":"SR3",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 10,
+            "algorithm": 0,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Silver",
+            "priority": 1,
+            "path": [[["P1", "P1:30014", "P4"]], [["P4", "P4:30045", "P5", "P5:30053", "P3"], ["P4", "P4:30046", "P6", "P6:30063", "P3"]]],
+            "traffic_flow": 15
+        },{
+            "id":"SR4",
+            "headend": "P1",
+            "tailend": "P3",
+            "metric": "te",
+            "bandwidth": 10,
+            "algorithm": 0,
+            "affinity": "0x0",
+            "mask": "0x0",
+            "include": [],
+            "exclude": [],
+            "tiebreaker": false,
+            "disjoint": false,
+            "segment_list": "60003",
+            "class":"Silver",
+            "priority": 1,
+            "path": [[["P1", "P1:30014", "P4"]], [["P4", "P4:30045", "P5", "P5:30053", "P3"], ["P4", "P4:30046", "P6", "P6:30063", "P3"]]],
+            "traffic_flow": 15
+        }],
+        "global":{
+            "algorithm": [{
+              "algo": 0
+            },{
+              "algo": 1,
+              "sorter": "metric",
+              "top": 10,
+              "limit": 0,
+              "loose": true
+            }],
+            "reopt_mode": "loose",
+            "flow_factor": 1.0,
+            "real_traffic": false,
+            "traffic_ratio": 1.0,
+            "congest_threshold": 0.8,
+            "target_threshold": 0.7,
+            "prioriry_prefer": "HIGH",
+            "traffic_prefer": "HIGH",
+            "priority_weight": 0.5,
+            "bandwidth_weight": 0.5
+        }
+    }
+
+**Response paramters**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Error info
+``data``                 body     data      Data detail info all algorithm instances involved
+=======================  ======== ========= ====================================================
+
+**Response paramters in single algorithm instance data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``algo_type``            body     integer   Algorithm type: 0=SPF ; 1 = Non SPF
+``status``               body     bool      Success or not for current algorithm
+``info``                 body     dic       Error info for current algorithm
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``id``                   body     string    Policy identity
+``sids``                 body     list      Best SID List after encode
+``paths``                body     list      Best hop-by-hop paths
+``segs``                 body     list      Best paths include segs info
+``attr``                 body     list      Best paths detail info
+``other``                body     list      Other choices
+``d_sids``               body     list      Disjoint SID List for best paths
+``d_paths``              body     list      Disjoint hop-by-hop paths
+``d_segs``               body     list      Disjoint paths include segs info
+``d_attr``               body     list      Disjoint paths detail info
+``d_other``              body     list      Other choices
+``time``                 body     float     Time consumed (ms)
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "algo_type": 0,
+                "status": true,
+                "info": {},
+                "data": [
+                    {
+                        "id": "SR1",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4/32",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P4:30046",
+                                    "lo": "P4",
+                                    "re": "P6",
+                                    "igp": 10,
+                                    "te": 10,
+                                    "delay": 100.0,
+                                    "bd": 50,
+                                    "affi": 0,
+                                    "ip": "4.4.4.6",
+                                    "sid": 30046
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 50
+                            },
+                            "other": [],
+                            "time": 0.22
+                        }
+                    },
+                    {
+                        "id": "SR2",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4/32",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P4:30046",
+                                    "lo": "P4",
+                                    "re": "P6",
+                                    "igp": 10,
+                                    "te": 10,
+                                    "delay": 100.0,
+                                    "bd": 50,
+                                    "affi": 0,
+                                    "ip": "4.4.4.6",
+                                    "sid": 30046
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 50
+                            },
+                            "other": [],
+                            "time": 0.2
+                        }
+                    },
+                    {
+                        "id": "SR3",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30012",
+                                    "P2",
+                                    "P2:30023",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30012",
+                                        "P2",
+                                        "P2:30023",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 20,
+                                "te": 20,
+                                "delay": 200.0,
+                                "min_hop": 2,
+                                "max_min_band": 30
+                            },
+                            "other": [],
+                            "time": 0.12
+                        }
+                    },
+                    {
+                        "id": "SR4",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4/32",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P4:30046",
+                                    "lo": "P4",
+                                    "re": "P6",
+                                    "igp": 10,
+                                    "te": 10,
+                                    "delay": 100.0,
+                                    "bd": 40,
+                                    "affi": 0,
+                                    "ip": "4.4.4.6",
+                                    "sid": 30046
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 40
+                            },
+                            "other": [],
+                            "time": 0.18
+                        }
+                    }
+                ]
+            },
+            {
+                "algo_type": 1,
+                "status": true,
+                "info": {},
+                "data": [
+                    {
+                        "id": "SR1",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4/32",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P4:30046",
+                                    "lo": "P4",
+                                    "re": "P6",
+                                    "igp": 10,
+                                    "te": 10,
+                                    "delay": 100.0,
+                                    "bd": 50,
+                                    "affi": 0,
+                                    "ip": "4.4.4.6",
+                                    "sid": 30046
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 50
+                            },
+                            "other": [],
+                            "time": 0.18
+                        }
+                    },
+                    {
+                        "id": "SR2",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4/32",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P4:30046",
+                                    "lo": "P4",
+                                    "re": "P6",
+                                    "igp": 10,
+                                    "te": 10,
+                                    "delay": 100.0,
+                                    "bd": 50,
+                                    "affi": 0,
+                                    "ip": "4.4.4.6",
+                                    "sid": 30046
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 50
+                            },
+                            "other": [],
+                            "time": 0.16
+                        }
+                    },
+                    {
+                        "id": "SR3",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30012",
+                                    "P2",
+                                    "P2:30023",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30012",
+                                        "P2",
+                                        "P2:30023",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 20,
+                                "te": 20,
+                                "delay": 200.0,
+                                "min_hop": 2,
+                                "max_min_band": 30
+                            },
+                            "other": [
+                                {
+                                    "sids": [
+                                        {
+                                            "id": "P4",
+                                            "ip": "4.4.4.4/32",
+                                            "sid": 60004
+                                        },
+                                        {
+                                            "id": "P4:30046",
+                                            "lo": "P4",
+                                            "re": "P6",
+                                            "igp": 10,
+                                            "te": 10,
+                                            "delay": 100.0,
+                                            "bd": 40,
+                                            "affi": 0,
+                                            "ip": "4.4.4.6",
+                                            "sid": 30046
+                                        },
+                                        {
+                                            "id": "P3",
+                                            "ip": "3.3.3.3/32",
+                                            "sid": 60003
+                                        }
+                                    ],
+                                    "paths": [
+                                        [
+                                            "P1",
+                                            "P1:30014",
+                                            "P4",
+                                            "P4:30046",
+                                            "P6",
+                                            "P6:30063",
+                                            "P3"
+                                        ]
+                                    ],
+                                    "segs": [
+                                        [
+                                            [
+                                                "P1",
+                                                "P1:30014",
+                                                "P4"
+                                            ]
+                                        ],
+                                        [
+                                            [
+                                                "P4",
+                                                "P4:30046",
+                                                "P6"
+                                            ]
+                                        ],
+                                        [
+                                            [
+                                                "P6",
+                                                "P6:30063",
+                                                "P3"
+                                            ]
+                                        ]
+                                    ],
+                                    "attr": {
+                                        "igp": 30,
+                                        "te": 30,
+                                        "delay": 300.0,
+                                        "min_hop": 3,
+                                        "max_min_band": 40
+                                    }
+                                }
+                            ],
+                            "time": 0.2
+                        }
+                    },
+                    {
+                        "id": "SR4",
+                        "data": {
+                            "sids": [
+                                {
+                                    "id": "P4",
+                                    "ip": "4.4.4.4/32",
+                                    "sid": 60004
+                                },
+                                {
+                                    "id": "P4:30046",
+                                    "lo": "P4",
+                                    "re": "P6",
+                                    "igp": 10,
+                                    "te": 10,
+                                    "delay": 100.0,
+                                    "bd": 40,
+                                    "affi": 0,
+                                    "ip": "4.4.4.6",
+                                    "sid": 30046
+                                },
+                                {
+                                    "id": "P3",
+                                    "ip": "3.3.3.3/32",
+                                    "sid": 60003
+                                }
+                            ],
+                            "paths": [
+                                [
+                                    "P1",
+                                    "P1:30014",
+                                    "P4",
+                                    "P4:30046",
+                                    "P6",
+                                    "P6:30063",
+                                    "P3"
+                                ]
+                            ],
+                            "segs": [
+                                [
+                                    [
+                                        "P1",
+                                        "P1:30014",
+                                        "P4"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P4",
+                                        "P4:30046",
+                                        "P6"
+                                    ]
+                                ],
+                                [
+                                    [
+                                        "P6",
+                                        "P6:30063",
+                                        "P3"
+                                    ]
+                                ]
+                            ],
+                            "attr": {
+                                "igp": 30,
+                                "te": 30,
+                                "delay": 300.0,
+                                "min_hop": 3,
+                                "max_min_band": 40
+                            },
+                            "other": [],
+                            "time": 0.17
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+
+
+Asynchronous Bod Policies Congested Reoptimize
+----------------------------------------------
+
+BoD SR Policies拥塞优化的异步调用接口
+
+.. code-block:: sh
+
+    POST api/reopt/async_bod_reoptimize
+
+**Request**
+
+与同步接口的请求格式相同，具体请参见Synchronous Bod Policies Congested Reoptimize部分的内容。
+
+**Response paramters in data list**
+
+异步调用接口会以task_id为返回值，task_id是异步任务的id，通过异步任务查询接口可以获得任务的执行状态，具体请参见vista/api/async_task部分
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``status``               body     bool      Success or not
+``info``                 body     dic       Information
+``data``                 body     list      Data detail info
+=======================  ======== ========= ====================================================
+
+**Response paramters in data detail**
+
+=======================  ======== ========= ====================================================
+Name                     In       Type      Description
+=======================  ======== ========= ====================================================
+``task_id``              body     string    Async task identifier
+=======================  ======== ========= ====================================================
+
+**Response Example**
+
+.. code-block:: json
+
+    {
+        "status": true,
+        "info": {},
+        "data": [
+            {
+                "task_id": "af2b62e3-9c05-4ae9-93c5-59073750bc67"
+            }
+        ]
+    }

@@ -1,0 +1,14 @@
+.. yare-server documentation master file, created by
+   sphinx-quickstart on Thu Mar 29 10:42:08 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Vista Service
+=============
+
+Vista service 文档，本文档包含vista service的软件环境安装方法，以及后台REST API的详细用法介绍。
+
+.. toctree::
+   :maxdepth: 5
+
+   vista/restapi
