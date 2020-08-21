@@ -17,6 +17,34 @@ cd ..
 pip install -r requirements.txt
 ```
 
+#### 配置本地环境 
+
+> 相关环境：
+> - mongo(4.2.7)
+> - redis(5.0.5)
+
+创建本地配置文件vista_backend_local.yaml，保存在vista/services/vista-backend/etc/目录下，
+
+```
+log:
+  level: DEBUG
+  handler: file
+  file_dir: /home/control/yare-core-log/vista-backend
+  file_name: vista_backend.log
+
+mongo_url: mongodb://0.0.0.0:27017/pasta
+
+redis_url: redis://0.0.0.0:6379/0
+
+celery_broker_url: redis://0.0.0.0:6379/0
+
+celery_result_backend: redis://0.0.0.0:6379/0
+```
+
+> Tips：
+> 1. 根据本地环境配置对应mongo和redis url
+> 2. 根据本地环境配置log输入参数
+
 #### 本地部署vista-backend
 
 ```
